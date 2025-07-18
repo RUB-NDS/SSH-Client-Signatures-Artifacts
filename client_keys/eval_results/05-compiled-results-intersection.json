@@ -1,0 +1,131 @@
+{
+  "dsa": {
+    "combined": {
+      "_compromised": 41,
+      "_fatal+blocklist": 29,
+      "_fatal+length_too_short": 12,
+      "_total": 11497,
+      "blocklist": 29,
+      "blocklist+debianssl": 29,
+      "length_too_short": 11495,
+      "order_not_160_bit": 2
+    },
+    "github": {},
+    "gitlab": {
+      "_compromised": 6,
+      "_fatal+length_too_short": 6,
+      "_total": 4048,
+      "length_too_short": 4047,
+      "order_not_160_bit": 1
+    },
+    "launchpad": {
+      "_compromised": 35,
+      "_fatal+blocklist": 29,
+      "_fatal+length_too_short": 6,
+      "_total": 7538,
+      "blocklist": 29,
+      "blocklist+debianssl": 29,
+      "length_too_short": 7537,
+      "order_not_160_bit": 1
+    }
+  },
+  "ecdsa": {
+    "combined": {},
+    "github": {},
+    "gitlab": {},
+    "launchpad": {}
+  },
+  "ed25519": {
+    "combined": {
+      "_compromised": 1,
+      "_fatal+blocklist": 1,
+      "_total": 163,
+      "blocklist": 1,
+      "blocklist+git": 1,
+      "encoding": 82,
+      "point_order": 80
+    },
+    "github": {
+      "_total": 2,
+      "encoding": 2
+    },
+    "gitlab": {
+      "_compromised": 1,
+      "_fatal+blocklist": 1,
+      "_total": 161,
+      "blocklist": 1,
+      "blocklist+git": 1,
+      "encoding": 80,
+      "point_order": 80
+    },
+    "launchpad": {}
+  },
+  "rsa": {
+    "combined": {
+      "_compromised": 231,
+      "_fatal+blocklist": 123,
+      "_fatal+length_too_short": 90,
+      "_fatal+roca": 17,
+      "_fatal+small_factor": 1,
+      "_total": 347784,
+      "blocklist": 123,
+      "blocklist+debianssl": 107,
+      "blocklist+git": 12,
+      "blocklist+softwaretests": 4,
+      "exponent_out_of_range": 313900,
+      "length_not_multiple_of_8": 15777,
+      "length_too_short": 60493,
+      "roca": 17,
+      "small_factor": 17,
+      "small_factors+partial_avg_loss": 95.5625,
+      "small_factors+partial_cnt": 16
+    },
+    "github": {
+      "_compromised": 10,
+      "_fatal+blocklist": 10,
+      "_total": 52165,
+      "blocklist": 10,
+      "blocklist+debianssl": 1,
+      "blocklist+git": 6,
+      "blocklist+softwaretests": 3,
+      "exponent_out_of_range": 47874,
+      "length_not_multiple_of_8": 1775,
+      "length_too_short": 6589
+    },
+    "gitlab": {
+      "_compromised": 80,
+      "_fatal+blocklist": 11,
+      "_fatal+length_too_short": 65,
+      "_fatal+roca": 4,
+      "_total": 269677,
+      "blocklist": 11,
+      "blocklist+debianssl": 2,
+      "blocklist+git": 9,
+      "exponent_out_of_range": 239810,
+      "length_not_multiple_of_8": 11510,
+      "length_too_short": 47053,
+      "roca": 4,
+      "small_factor": 1,
+      "small_factors+partial_avg_loss": 210.0,
+      "small_factors+partial_cnt": 1
+    },
+    "launchpad": {
+      "_compromised": 145,
+      "_fatal+blocklist": 106,
+      "_fatal+length_too_short": 25,
+      "_fatal+roca": 13,
+      "_fatal+small_factor": 1,
+      "_total": 43134,
+      "blocklist": 106,
+      "blocklist+debianssl": 104,
+      "blocklist+softwaretests": 2,
+      "exponent_out_of_range": 42695,
+      "length_not_multiple_of_8": 2955,
+      "length_too_short": 8670,
+      "roca": 13,
+      "small_factor": 16,
+      "small_factors+partial_avg_loss": 87.93333333333334,
+      "small_factors+partial_cnt": 15
+    }
+  }
+}

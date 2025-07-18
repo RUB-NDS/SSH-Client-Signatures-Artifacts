@@ -1,0 +1,159 @@
+{
+  "dsa": {
+    "combined": {
+      "_compromised": 42,
+      "_fatal+blocklist": 29,
+      "_fatal+length_too_short": 12,
+      "_fatal+p_not_prime": 1,
+      "_fatal+wrong_order": 2,
+      "_total": 11614,
+      "blocklist": 29,
+      "blocklist+debianssl": 29,
+      "length_too_short": 11611,
+      "order_not_160_bit": 3,
+      "p_not_prime": 1,
+      "wrong_order": 2
+    },
+    "github": {},
+    "gitlab": {
+      "_compromised": 6,
+      "_fatal+length_too_short": 6,
+      "_total": 4122,
+      "length_too_short": 4120,
+      "order_not_160_bit": 2
+    },
+    "launchpad": {
+      "_compromised": 36,
+      "_fatal+blocklist": 29,
+      "_fatal+length_too_short": 6,
+      "_fatal+p_not_prime": 1,
+      "_fatal+wrong_order": 2,
+      "_total": 7581,
+      "blocklist": 29,
+      "blocklist+debianssl": 29,
+      "length_too_short": 7580,
+      "order_not_160_bit": 1,
+      "p_not_prime": 1,
+      "wrong_order": 2
+    }
+  },
+  "ecdsa": {
+    "combined": {},
+    "github": {},
+    "gitlab": {},
+    "launchpad": {}
+  },
+  "ed25519": {
+    "combined": {
+      "_compromised": 4,
+      "_fatal+blocklist": 4,
+      "_total": 1404,
+      "blocklist": 4,
+      "blocklist+git": 4,
+      "encoding": 759,
+      "point_order": 641
+    },
+    "github": {
+      "_compromised": 2,
+      "_fatal+blocklist": 2,
+      "_total": 1122,
+      "blocklist": 2,
+      "blocklist+git": 2,
+      "encoding": 603,
+      "point_order": 517
+    },
+    "gitlab": {
+      "_compromised": 2,
+      "_fatal+blocklist": 2,
+      "_total": 283,
+      "blocklist": 2,
+      "blocklist+git": 2,
+      "encoding": 157,
+      "point_order": 124
+    },
+    "launchpad": {}
+  },
+  "rsa": {
+    "combined": {
+      "_compromised": 269,
+      "_fatal+blocklist": 133,
+      "_fatal+even_exponent": 4,
+      "_fatal+length_too_short": 98,
+      "_fatal+roca": 25,
+      "_fatal+small_factor": 10,
+      "_total": 390341,
+      "blocklist": 133,
+      "blocklist+debianssl": 113,
+      "blocklist+firmware": 1,
+      "blocklist+git": 13,
+      "blocklist+keypair": 1,
+      "blocklist+rfc": 1,
+      "blocklist+softwaretests": 4,
+      "even_exponent": 4,
+      "even_modulus": 23,
+      "exponent_out_of_range": 336956,
+      "length_not_multiple_of_8": 20692,
+      "length_too_short": 77438,
+      "roca": 25,
+      "small_factor": 132,
+      "small_factors+partial_avg_loss": 90.81147540983606,
+      "small_factors+partial_cnt": 122
+    },
+    "github": {
+      "_compromised": 17,
+      "_fatal+blocklist": 16,
+      "_fatal+even_exponent": 1,
+      "_total": 82656,
+      "blocklist": 16,
+      "blocklist+debianssl": 4,
+      "blocklist+git": 7,
+      "blocklist+keypair": 1,
+      "blocklist+rfc": 1,
+      "blocklist+softwaretests": 3,
+      "even_exponent": 1,
+      "exponent_out_of_range": 62241,
+      "length_not_multiple_of_8": 5704,
+      "length_too_short": 20084
+    },
+    "gitlab": {
+      "_compromised": 107,
+      "_fatal+blocklist": 13,
+      "_fatal+even_exponent": 3,
+      "_fatal+length_too_short": 73,
+      "_fatal+roca": 11,
+      "_fatal+small_factor": 8,
+      "_total": 282085,
+      "blocklist": 13,
+      "blocklist+debianssl": 4,
+      "blocklist+git": 9,
+      "even_exponent": 3,
+      "even_modulus": 23,
+      "exponent_out_of_range": 248685,
+      "length_not_multiple_of_8": 12573,
+      "length_too_short": 50589,
+      "roca": 11,
+      "small_factor": 114,
+      "small_factors+partial_avg_loss": 91.50943396226415,
+      "small_factors+partial_cnt": 106
+    },
+    "launchpad": {
+      "_compromised": 149,
+      "_fatal+blocklist": 108,
+      "_fatal+length_too_short": 25,
+      "_fatal+roca": 14,
+      "_fatal+small_factor": 2,
+      "_total": 43321,
+      "blocklist": 108,
+      "blocklist+debianssl": 105,
+      "blocklist+firmware": 1,
+      "blocklist+softwaretests": 2,
+      "exponent_out_of_range": 42866,
+      "length_not_multiple_of_8": 2972,
+      "length_too_short": 8701,
+      "roca": 14,
+      "small_factor": 18,
+      "small_factors+partial_avg_loss": 86.1875,
+      "small_factors+partial_cnt": 16
+    }
+  }
+}

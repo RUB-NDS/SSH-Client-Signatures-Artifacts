@@ -1,0 +1,53 @@
+{
+  "elasticsearch": {
+    "url": [
+      "https://localhost:9200"
+    ],
+    "username": "elastic",
+    "password": "",
+    "tls": {
+      "enabled": true,
+      "caCert": "elasticsearch.pem"
+    }
+  },
+  "scraperIndex": "sshks_scrapers",
+  "scrapers": {
+    "github": {
+      "enabled": true,
+      "reverse": false,
+      "token": "",
+      "timeout": "30s",
+      "minimumIterationDuration": "20s",
+      "userIndex": "sshks_users_github",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "secondaryRateLimitCooldown": "1m",
+      "apiErrorCooldown": "1h"
+    },
+    "gitlab": {
+      "enabled": true,
+      "reverse": false,
+      "token": "",
+      "timeout": "30s",
+      "minimumIterationDuration": "0s",
+      "userIndex": "sshks_users_gitlab",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "concurrentRequests": 10,
+      "apiErrorCooldown": "5m",
+      "maxRetries": 5
+    },
+    "launchpad": {
+      "enabled": true,
+      "reverse": false,
+      "timeout": "30s",
+      "minimumIterationDuration": "0s",
+      "userIndex": "sshks_users_launchpad",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "concurrentRequests": 10,
+      "apiErrorCooldown": "5m",
+      "maxRetries": 10
+    }
+  }
+}

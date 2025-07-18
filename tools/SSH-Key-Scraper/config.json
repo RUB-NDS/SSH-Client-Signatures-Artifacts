@@ -1,0 +1,54 @@
+{
+  "elasticsearch": {
+    "url": [
+      "https://localhost:9200"
+    ],
+    "username": "elastic",
+    "password": "elasticsearchpass",
+    "tls": {
+      "enabled": true,
+      "caCert": "elasticsearch.pem"
+    }
+  },
+  "scraperIndex": "sshks_scrapers",
+  "scrapers": {
+    "github": {
+      "enabled": true,
+      "reverse": false,
+      "token": "<<< token github >>>",
+      "timeout": "30s",
+      "minimumIterationDuration": "20s",
+      "userIndex": "sshks_users_github",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "secondaryRateLimitCooldown": "1m",
+      "apiErrorCooldown": "1h"
+    },
+    "gitlab": {
+      "enabled": false,
+      "reverse": false,
+      "token": "<<< token gitlab >>>",
+      "timeout": "30s",
+      "userIndex": "sshks_users_gitlab",
+      "initialCursor": "",
+      "minimumIterationDuration": "20s",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "concurrentRequests": 10,
+      "apiErrorCooldown": "10m",
+      "maxRetries": 5
+    },
+    "launchpad": {
+      "enabled": false,
+      "reverse": false,
+      "timeout": "30s",
+      "userIndex": "sshks_users_launchpad",
+      "minimumIterationDuration": "20s",
+      "incrementalInterval": "24h",
+      "fullInterval": "720h",
+      "concurrentRequests": 10,
+      "apiErrorCooldown": "5m",
+      "maxRetries": 10
+    }
+  }
+}
