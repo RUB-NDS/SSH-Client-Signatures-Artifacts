@@ -1,0 +1,18 @@
+query GetUsers(
+    $after: String,
+    $sort: Sort!
+) {
+    users(sort: $sort, first: 100, after: $after) {
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        nodes {
+            id
+            username
+            state
+            createdAt
+            lastActivityOn
+        }
+    }
+}
