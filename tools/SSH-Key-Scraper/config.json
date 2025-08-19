@@ -7,7 +7,7 @@
     "password": "elasticsearchpass",
     "tls": {
       "enabled": true,
-      "caCert": "elasticsearch.pem"
+      "caCert": "ca.crt"
     }
   },
   "scraperIndex": "sshks_scrapers",
@@ -15,7 +15,7 @@
     "github": {
       "enabled": true,
       "reverse": false,
-      "token": "<<< token github >>>",
+      "token": "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",
       "timeout": "30s",
       "minimumIterationDuration": "20s",
       "userIndex": "sshks_users_github",
@@ -25,9 +25,9 @@
       "apiErrorCooldown": "1h"
     },
     "gitlab": {
-      "enabled": false,
+      "enabled": true,
       "reverse": false,
-      "token": "<<< token gitlab >>>",
+      "token": "glpat-87uUKrW5YznISIAppECYqW86MQp1OjhqZndkCw.01.120yz0o9h",
       "timeout": "30s",
       "userIndex": "sshks_users_gitlab",
       "initialCursor": "",
@@ -39,7 +39,7 @@
       "maxRetries": 5
     },
     "launchpad": {
-      "enabled": false,
+      "enabled": true,
       "reverse": false,
       "timeout": "30s",
       "userIndex": "sshks_users_launchpad",

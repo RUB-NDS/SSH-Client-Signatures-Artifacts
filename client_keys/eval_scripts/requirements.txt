@@ -1,11 +1,10 @@
-elasticsearch==8.17.0
+elasticsearch==9.1.0
 mpire==2.10.2
 tqdm==4.67.1
-matplotlib==3.5.1
-numpy==1.22.3
-cryptography==3.4.8
+matplotlib==3.10.5
+numpy==2.3.2
+cryptography==45.0.6
 ECPy==1.2.5
-badkeys==0.0.12
+badkeys==0.0.13
 roca-detect==1.2.12
-sagemath-standard==9.5
-gmpy2==2.1.2
+gmpy2==2.2.1

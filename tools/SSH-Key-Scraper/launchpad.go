@@ -4,18 +4,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/elastic/go-elasticsearch/v9/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/types"
 )
 
 // requestedTimespanLaunchpad specifies the timespan which we request in a single request from the search API (72 hours)
 const requestedTimespanLaunchpad = 24 * time.Hour
+
+// usersPerRequest specifies the number of users to request from the Launchpad API per single request
+// As the Launchpad API is highly unstable, reducing this value may result in less frequent timeouts
+const usersPerRequest = 10
 
 // initialCursorLaunchpad is the creation date of the first user account on Launchpad. It is used as the start point
 // (or end point in case of reverse direction) for scraping runs
@@ -331,17 +336,21 @@ func (s *LaunchpadScraper) Scrape(ctx context.Context) (bool, error) {
 				startDate, _ := time.Parse(time.RFC3339, s.Cursor)
 				endDate := startDate.Add(requestedTimespanLaunchpad)
 				lastTimespan = endDate.After(time.Now())
-				requestUrl = fmt.Sprintf("https://api.launchpad.net/devel/people?created_after=\"%s\"&created_before=\"%s\"&text=\"\"&ws.op=findPerson&ws.size=100",
+				// The Launchpad API is highly unstable - request only 10 entries (down from 100) to reduce timeouts
+				requestUrl = fmt.Sprintf("https://api.launchpad.net/devel/people?created_after=\"%s\"&created_before=\"%s\"&text=\"\"&ws.op=findPerson&ws.size=%d",
 					url.QueryEscape(startDate.UTC().Format("2006-01-02T15:04:05Z")),
-					url.QueryEscape(endDate.UTC().Format("2006-01-02T15:04:05Z")))
+					url.QueryEscape(endDate.UTC().Format("2006-01-02T15:04:05Z")),
+					usersPerRequest)
 			} else {
 				endDate, _ := time.Parse(time.RFC3339, s.Cursor)
 				startDate := endDate.Add(-requestedTimespanLaunchpad)
 				// Stop when reaching 2000-01-01T00:00:00Z
 				lastTimespan = startDate.Before(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC))
-				requestUrl = fmt.Sprintf("https://api.launchpad.net/devel/people?created_after=\"%s\"&created_before=\"%s\"&text=\"\"&ws.op=findPerson&ws.size=100",
+				// The Launchpad API is highly unstable - request only 10 entries (down from 100) to reduce timeouts
+				requestUrl = fmt.Sprintf("https://api.launchpad.net/devel/people?created_after=\"%s\"&created_before=\"%s\"&text=\"\"&ws.op=findPerson&ws.size=%d",
 					url.QueryEscape(startDate.UTC().Format("2006-01-02T15:04:05Z")),
-					url.QueryEscape(endDate.UTC().Format("2006-01-02T15:04:05Z")))
+					url.QueryEscape(endDate.UTC().Format("2006-01-02T15:04:05Z")),
+					usersPerRequest)
 			}
 		}
 		var res *http.Response
@@ -387,7 +396,7 @@ func (s *LaunchpadScraper) Scrape(ctx context.Context) (bool, error) {
 			return false, err
 		}
 
-		users := make(chan LaunchpadPeopleApiEntry, 100)
+		users := make(chan LaunchpadPeopleApiEntry, usersPerRequest)
 		failures := make(chan error, concurrentRequests)
 		wg.Add(concurrentRequests)
 		for i := 0; i < concurrentRequests; i++ {

@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+#
+# Usage: ./01-extract-keys-sshks.py
+#
+# This script collects the SSH public keys from the user-oriented indices
+# created by the scraper and transforms them into key-oriented indices with
+# references to the original user documents. At the same time, the encoded
+# public key is parsed and its components are extracted. Parsing errors are
+# logged.
+#
 import math
 import traceback
 import os
@@ -6,40 +15,15 @@ import base64
 import hashlib
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import parallel_bulk, scan
 from mpire import WorkerPool
 from mpire.utils import make_single_arguments
 from tqdm import tqdm
 
-from myssh import load_ssh_public_key
-from elasticsearch.helpers import parallel_bulk, scan
-
-from myssh import _SSHFormatDSA
+from .lib.myssh import load_ssh_public_key, _SSHFormatDSA
+from .config import *
 
 
-def _no_validate(self, x):
-    pass
-
-
-_SSHFormatDSA._validate = _no_validate
-
-ES_URL = [
-    "https://192.168.66.3:9200",
-    "https://192.168.66.5:9200",
-    "https://192.168.66.125:9200",
-]
-ES_CA_CERT = "ca.crt"
-ES_USER = "elastic"
-ES_PASSWORD = "<<< password >>>"
-
-INDEX_USERS_LAUNCHPAD = "sshks_users_launchpad"
-INDEX_USERS_GITLAB = "sshks_users_gitlab"
-INDEX_USERS_GITHUB = "sshks_users_github"
-SRC_INDICES = [
-    #INDEX_USERS_GITHUB,
-    # INDEX_USERS_GITLAB,
-    INDEX_USERS_LAUNCHPAD
-]
-DEST_INDEX = "sshks_keys_launchpad_202501"
 MAPPINGS = {
     "properties": {
         "entry": {"type": "integer"},
@@ -68,17 +52,26 @@ MAPPINGS = {
     }
 }
 
+
+def _no_validate(self, x):
+    pass
+
+_SSHFormatDSA._validate = _no_validate
+
+
 class KeyIterator(object):
     def __init__(
         self,
-        batchsize=5000,
-        request_timeout=60,
+        src_index,
+        dest_index,
+        batchsize=10000,
         scroll="60m",
         bulk_threads=16,
         parallel=None,
     ):
+        self.src_index = src_index
+        self.dest_index = dest_index
         self.batchsize = batchsize
-        self.request_timeout = request_timeout
         self.scroll = scroll
         self.bulk_threads = bulk_threads
         if parallel is None:
@@ -91,24 +84,23 @@ class KeyIterator(object):
             ES_URL,
             ca_certs=ES_CA_CERT,
             basic_auth=(ES_USER, ES_PASSWORD),
-            request_timeout=self.request_timeout,
+            request_timeout=ES_REQUEST_TIMEOUT,
         )
         if not self.es.ping():
             tqdm.write("Could not reach Elasticsearch. Abort.")
             raise ConnectionError("Could not reach Elasticsearch.")
         # Adjust result window on source indices to allow for larger batch sizes.
         self.es.indices.put_settings(
-            index=SRC_INDICES,
+            index=self.src_index,
             body={"index.max_result_window": max(self.batchsize, 10000)},
         )
         # Drop the index if it already exists.
-        if self.es.indices.exists(index=DEST_INDEX):
-            self.es.indices.delete(index=DEST_INDEX)
+        if self.es.indices.exists(index=self.dest_index):
+            self.es.indices.delete(index=self.dest_index)
             self.es.indices.create(
-                index=DEST_INDEX,
+                index=self.dest_index,
                 mappings=MAPPINGS,
-                settings={"number_of_shards": 1, "number_of_replicas": 2},
-            )
+                settings={"number_of_shards": 1, "number_of_replicas": 2})
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -116,7 +108,7 @@ class KeyIterator(object):
         self.es.close()
 
     def get_total_key_count(self):
-        return self.es.count(index=SRC_INDICES)["count"]
+        return self.es.count(index=self.src_index)["count"]
 
     def run(self):
         # Query to retrieve all keys from the source indices.
@@ -148,11 +140,11 @@ class KeyIterator(object):
             for hit in tqdm(
                 scan(
                     self.es,
-                    index=SRC_INDICES,
+                    index=self.src_index,
                     scroll=self.scroll,
                     query=query,
                     size=self.batchsize,
-                    request_timeout=self.request_timeout,
+                    request_timeout=ES_REQUEST_TIMEOUT,
                 ),
                 desc="Keys retrieved",
                 total=key_cnt,
@@ -177,7 +169,7 @@ class KeyIterator(object):
                 for key in result["_keys"]:
                     action = {
                         "_op_type": "index",
-                        "_index": DEST_INDEX,
+                        "_index": self.dest_index,
                         "_source": key,
                     }
                     actions.append(action)
@@ -245,7 +237,6 @@ class KeyIterator(object):
 def pad_b64(b64):
     return b64 + "=" * (-len(b64) % 4)
 
-
 def parse_launchpad_key(raw):
     def parse_key(key_b64):
         blob = base64.b64decode(key_b64)
@@ -267,7 +258,6 @@ def parse_launchpad_key(raw):
             return parse_key(key_b64)
         except Exception:
             raise e
-
 
 def parse_key_obj(key_obj, src):
     raw = key_obj["key"]
@@ -328,7 +318,6 @@ def parse_key_obj(key_obj, src):
         raise ValueError("Unknown key type " + repr(sshpubkey))
     return key
 
-
 def process(user_obj):
     keys = []
     errors = []
@@ -357,5 +346,15 @@ def process(user_obj):
 
 
 if __name__ == "__main__":
-    with KeyIterator(batchsize=1000000, parallel=250) as iterator:
-        iterator.run()
+    for src_index, dest_index in [
+        (INDEX_USERS_GITHUB, INDEX_KEYS_GITHUB),
+        (INDEX_USERS_GITLAB, INDEX_KEYS_GITLAB),
+        (INDEX_USERS_LAUNCHPAD, INDEX_KEYS_LAUNCHPAD),
+    ]:
+        with KeyIterator(
+            src_index,
+            dest_index,
+            batchsize=BATCH_SIZE,
+            parallel=PARALLEL_WORKERS,
+            bulk_threads=BULK_THREADS) as iterator:
+            iterator.run()

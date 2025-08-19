@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+#
+# Usage: ./05-compile-results.py
+#
+# This script aggregates the results of the key analysis into a single JSON file.
+#
 
 from collections import defaultdict
 import csv
@@ -6,12 +11,10 @@ from json import loads, dumps
 
 from tqdm import tqdm
 
-RESULTS_IN = "results/04-analysis-results-intersection.csv"
-RESULTS_OUT= "results/05-compiled-results-intersection.json"
+from config import *
 
-GITHUB_SOURCE_INDEX = "sshks_users_github"
-GITLAB_SOURCE_INDEX = "sshks_users_gitlab"
-LAUNCHPAD_SOURCE_INDEX = "sshks_users_launchpad"
+RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results.csv"
+RESULTS_OUT= f"{RESULTS_DIR}/05-compiled-results-intersection.json"
 
 
 def make_results_dict():
@@ -22,7 +25,6 @@ def make_results_dict():
         "launchpad": defaultdict(int),
     }
 
-
 RESULTS = {
     "dsa": make_results_dict(),
     "rsa": make_results_dict(),
@@ -30,18 +32,16 @@ RESULTS = {
     "ed25519": make_results_dict(),
 }
 
-
 def map_sources(sources):
     srcs = set()
     for source in sources:
-        if source["index"] == GITHUB_SOURCE_INDEX:
+        if source["index"] == INDEX_USERS_GITHUB:
             srcs.add("github")
-        elif source["index"] == GITLAB_SOURCE_INDEX:
+        elif source["index"] == INDEX_USERS_GITLAB:
             srcs.add("gitlab")
-        elif source["index"] == LAUNCHPAD_SOURCE_INDEX:
+        elif source["index"] == INDEX_USERS_LAUNCHPAD:
             srcs.add("launchpad")
     return list(srcs)
-
 
 def count_result(alg, result, sources):
     for source in sources + ['combined']:
@@ -58,6 +58,8 @@ def count_result(alg, result, sources):
             if issue['check'] == 'blocklist':
                 blocklist = issue['info'].split(' ')[-4]
                 RESULTS[alg][source]['blocklist+'+blocklist] += 1
+
+
 if __name__ == "__main__":
     with open(RESULTS_IN, "r") as f:
         csv_reader = csv.reader(f)

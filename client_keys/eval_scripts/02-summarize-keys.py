@@ -1,31 +1,34 @@
 #!/usr/bin/env python3
+#
+# Usage: ./02-summarize-keys.py
+#
+# This script generates general statistics for SSH public keys in the unique
+# keys index. In particular, it counts the occurence of different algorithms,
+# curves, RSA exponents, and RSA moduli lengths. The data is output as CSV
+# and LaTeX table, as well as graphs for RSA moduli length and ECDSA curve
+# distribution.
+#
+from collections import defaultdict
 import csv
 import os
+
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
-from tqdm import tqdm
-from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
-ES_URL = [
-    "https://192.168.66.3:9200",
-    "https://192.168.66.5:9200",
-    "https://192.168.66.125:9200",
-]
-ES_CA_CERT = "ca.crt"
-ES_USER = "elastic"
-ES_PASSWORD = "<<< password >>>"
+from .config import *
 
 FORCE_RESCAN = False
-DBINDEX = "sshks_keys_unique_202501"
-SOURCES = ["sshks_users_github", "sshks_users_gitlab", "sshks_users_launchpad"]
+DBINDEX = INDEX_KEYS_UNIQUE
+SOURCES = [INDEX_KEYS_GITHUB, INDEX_KEYS_GITLAB, INDEX_KEYS_LAUNCHPAD]
 
-CSV_OUT = "results/202501/02-summary.csv"
-LATEX_OUT = "results/202501/02-summary.tex"
-RSA_MODULUS_DIST_IMG_OUT = "results/202501/02-summary-rsa-modulus-dist.png"
-RSA_MODULUS_CDF_IMG_OUT = "results/202501/02-summary-rsa-modulus-cdf.png"
-ECDSA_CURVE_DIST_IMG_OUT = "results/202501/02-summary-ecdsa-curve-dist.png"
+CSV_OUT = f"{RESULTS_DIR}/02-summary.csv"
+LATEX_OUT = f"{RESULTS_DIR}/02-summary.tex"
+RSA_MODULUS_DIST_IMG_OUT = f"{RESULTS_DIR}/02-summary-rsa-modulus-dist.png"
+RSA_MODULUS_CDF_IMG_OUT = f"{RESULTS_DIR}/02-summary-rsa-modulus-cdf.png"
+ECDSA_CURVE_DIST_IMG_OUT = f"{RESULTS_DIR}/02-summary-ecdsa-curve-dist.png"
 
 
 def create_stats():
@@ -38,9 +41,8 @@ def create_stats():
 
 
 class KeySummarizer(object):
-    def __init__(self, batchsize=100000, request_timeout=60, scroll="60m"):
+    def __init__(self, batchsize=100000, scroll="60m"):
         self.batchsize = batchsize
-        self.request_timeout = request_timeout
         self.scroll = scroll
 
     def __enter__(self):
@@ -49,7 +51,7 @@ class KeySummarizer(object):
             ES_URL,
             ca_certs=ES_CA_CERT,
             basic_auth=(ES_USER, ES_PASSWORD),
-            request_timeout=self.request_timeout,
+            request_timeout=ES_REQUEST_TIMEOUT,
         )
         if not self.es.ping():
             raise ValueError("Unable to connect to Elasticsearch.")
@@ -118,7 +120,6 @@ def output_stats_csv(fh, stats):
         ]
     )
 
-
 def input_stats_csv(fh):
     reader = csv.reader(fh)
     stats = defaultdict(create_stats)
@@ -130,7 +131,6 @@ def input_stats_csv(fh):
         source, stat_name, match, count = row
         stats[source][stat_name][match] = int(count)
     return stats
-
 
 def output_stats_latex(fh, stats):
     fh.write(r"\begin{tabular}{lrrrrrrrr}" + "\n")
@@ -173,7 +173,6 @@ def output_stats_latex(fh, stats):
     fh.write(r" & \totalstyle{" + f"{count}" + r"} \\" + "\n")
     fh.write(r"\bottomrule" + "\n")
     fh.write(r"\end{tabular}" + "\n")
-
 
 def generate_rsa_modulus_dist(stats):
     plt.figure(figsize=(8, 2))
@@ -224,7 +223,6 @@ def generate_rsa_modulus_dist(stats):
     plt.savefig(RSA_MODULUS_DIST_IMG_OUT, dpi=300, bbox_inches="tight")
     plt.close()
 
-
 def generate_rsa_modulus_cdf(stats):
     plt.figure(figsize=(6, 6))
     source_to_style = {
@@ -259,7 +257,6 @@ def generate_rsa_modulus_cdf(stats):
     plt.legend()
     plt.savefig(RSA_MODULUS_CDF_IMG_OUT, dpi=300, bbox_inches="tight")
     plt.close()
-
 
 def generate_ecdsa_curve_dist(stats):
     plt.figure(figsize=(8, 2))
@@ -321,7 +318,7 @@ if __name__ == "__main__":
         with open(CSV_OUT, "r") as fh:
             STATS = input_stats_csv(fh)
     else:
-        with KeySummarizer() as iterator:
+        with KeySummarizer(batchsize=BATCH_SIZE) as iterator:
             iterator.summarize(STATS)
         with open(CSV_OUT, "w") as fh:
             output_stats_csv(fh, STATS)

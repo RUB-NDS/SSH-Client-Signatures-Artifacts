@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
+#
+# Usage: ./04-result-intersection.py
+#
+# This script is supplementary to the key analysis scripts and is used to find
+# the intersection of results between two analysis runs. Adjust the file paths
+# below to point to the correct result files in CSV format. For a single evaluation
+# run, this script is not needed. The output is of the same format as the two inputs.
+#
 
 import csv
 
-RESULTS_FILE_1 = "results/202306/03-analysis-results.csv"
-RESULTS_FILE_2 = "results/202501/03-analysis-results.csv"
-RESULTS_FILE_OUT = "results/04-analysis-results-intersection.csv"
+from config import *
+
+RESULTS_FILE_1 = f"{RESULTS_DIR}/03-analysis-results.csv"
+RESULTS_FILE_2 = "<second>/<results>/03-analysis-results.csv"
+RESULTS_FILE_OUT = f"{RESULTS_DIR}/04-analysis-results-intersection.csv"
 
 if __name__ == '__main__':
   fpr_set = set()

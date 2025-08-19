@@ -4,16 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/create"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"github.com/reugn/go-quartz/job"
-	"github.com/reugn/go-quartz/quartz"
-	"github.com/spf13/viper"
 	"log"
 	"os"
 	"time"
+
+	"github.com/elastic/go-elasticsearch/v9"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/indices/create"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/types"
+	"github.com/reugn/go-quartz/job"
+	"github.com/reugn/go-quartz/quartz"
+	"github.com/spf13/viper"
 )
 
 type Platform string
@@ -169,6 +170,8 @@ func (s *Scraper) createUserIndex(ctx context.Context, userMeta *types.ObjectPro
 	if exists {
 		return nil
 	}
+	numShards := "1"
+	numReplicas := "2"
 	_, err = s.Elasticsearch.Indices.
 		Create(s.UserIndex).
 		Request(&create.Request{
@@ -189,8 +192,8 @@ func (s *Scraper) createUserIndex(ctx context.Context, userMeta *types.ObjectPro
 				},
 			},
 			Settings: &types.IndexSettings{
-				NumberOfShards:   "1",
-				NumberOfReplicas: "2",
+				NumberOfShards:   &numShards,
+				NumberOfReplicas: &numReplicas,
 			},
 		}).
 		Do(ctx)
@@ -312,6 +315,8 @@ func (s *Scraper) scheduleResetJob() {
 
 func LoadScraper(ctx context.Context, es *elasticsearch.TypedClient, platform Platform) (*Scraper, error) {
 	scraperIndex := viper.GetString("scraperIndex")
+	numShards := "1"
+	numReplicas := "2"
 	if exists, err := es.Indices.Exists(scraperIndex).Do(ctx); !exists {
 		_, err := es.Indices.Create(scraperIndex).Request(&create.Request{
 			Mappings: &types.TypeMapping{
@@ -326,8 +331,8 @@ func LoadScraper(ctx context.Context, es *elasticsearch.TypedClient, platform Pl
 				},
 			},
 			Settings: &types.IndexSettings{
-				NumberOfShards:   "1",
-				NumberOfReplicas: "2",
+				NumberOfShards:   &numShards,
+				NumberOfReplicas: &numReplicas,
 			},
 		}).Do(ctx)
 		if err != nil {

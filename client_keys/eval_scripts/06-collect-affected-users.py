@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+#
+# Usage: ./06-collect-affected-users.py
+#
+# This script collects the affected users based on the analysis results and writes
+# them to separate CSV files, one per platform, for responsible disclosure.
+# To do so, the script tracks the originating user documents via the source
+# attribute of each key document. Additional key documents to be included
+# (e.g. keys affected by batch gcd) can be provided in the BATCH_GCD_RESULTS
+# variable.
+#
 
 import base64
 import csv
@@ -6,24 +16,13 @@ from json import loads
 
 from elasticsearch import Elasticsearch
 
-RESULTS_IN = "results/202501/03-analysis-results.csv"
+from config import *
 
-AFFECTED_USERS_GITHUB_OUT = "results/202501/06-affected-users-github.csv"
-AFFECTED_USERS_GITLAB_OUT = "results/202501/06-affected-users-gitlab.csv"
-AFFECTED_USERS_LP_OUT = "results/202501/06-affected-users-lp.csv"
+RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results.csv"
 
-SRC_INDEX_GITHUB = "sshks_users_github"
-SRC_INDEX_GITLAB = "sshks_users_gitlab"
-SRC_INDEX_LP = "sshks_users_launchpad"
-
-ES_URL = [
-    "https://192.168.66.3:9200",
-    "https://192.168.66.5:9200",
-    "https://192.168.66.125:9200",
-]
-ES_CA_CERT = "ca.crt"
-ES_USER = "elastic"
-ES_PASSWORD = "<<< password >>>"
+AFFECTED_USERS_GITHUB_OUT = f"{RESULTS_DIR}/06-affected-users-github.csv"
+AFFECTED_USERS_GITLAB_OUT = f"{RESULTS_DIR}/06-affected-users-gitlab.csv"
+AFFECTED_USERS_LP_OUT = f"{RESULTS_DIR}/06-affected-users-lp.csv"
 
 # Checks that we deem not impactful enough to justify a report to the platform
 # owners (although we offered to supply these as well in our initial report).
@@ -44,25 +43,9 @@ EXCLUDED_CHECKS = [
   'order_not_160_bit',
 ]
 
-BATCH_GCD_RESULTS = [
-  'wOK0YJQBnYvACrn6NWqI',
-  'uLOtYJQBnz59Hra6zmt9',
-  'tdSxYJQBnYvACrn6CSse',
-  'D8KrYJQBnYvACrn6Su8N',
-  'aamqYJQBnz59Hra6it6x',
-  'QKSoYJQBnz59Hra6bfqE',
-  'HDC0YJQBOSGwKIU3BA-M',
-  '78KrYJQBnYvACrn6FzG_',
-  '7i-zYJQBOSGwKIU34FUA',
-  'P72pYJQBnYvACrn6LM_Z',
-  'lreuYJQBnz59Hra6yzFg',
-  '2L2wYJQBnz59Hra67GRB',
-  '436cYJQBnz59Hra6-oIY',
-  'jcquYJQBnYvACrn6BYrr',
-  'VJWjYJQBnz59Hra6W3by',
-  'kAqoYJQBOSGwKIU3mswA',
-  '1uedYJQBOSGwKIU38sWU'
-]
+# As batch gcd is run separately, provide the document ids of vulnerable key documents
+# in the unique key index. If left empty, results from batch gcd will not be included.
+BATCH_GCD_RESULTS = [ ]
 
 if __name__ == '__main__':
   with (open(RESULTS_IN, 'r') as f,
@@ -73,7 +56,7 @@ if __name__ == '__main__':
             ES_URL,
             ca_certs=ES_CA_CERT,
             basic_auth=(ES_USER, ES_PASSWORD),
-            request_timeout=60,
+            request_timeout=ES_REQUEST_TIMEOUT,
         ) as es):
     # Init CSV reader and writers
     reader = csv.reader(f)
@@ -95,23 +78,24 @@ if __name__ == '__main__':
         fpr_github = 'SHA256:' + base64.b64encode(bytes.fromhex(fpr)).decode('utf-8').replace('=', '')
         for source in sources:
           src_doc = es.get(index=source['index'], id=source['id'])
-          if source['index'] == SRC_INDEX_GITHUB:
+          if source['index'] == INDEX_USERS_GITHUB:
             writer_github.writerow([
               src_doc['_source']['username'],
               src_doc['_source']['metadata']['remoteId'],
               fpr_github,
               check_str])
-          elif source['index'] == SRC_INDEX_GITLAB:
+          elif source['index'] == INDEX_USERS_GITLAB:
             writer_gitlab.writerow([
               src_doc['_source']['username'],
               src_doc['_source']['metadata']['remoteId'],
               fpr,
               check_str])
-          elif source['index'] == SRC_INDEX_LP:
+          elif source['index'] == INDEX_USERS_LAUNCHPAD:
             writer_lp.writerow([
               src_doc['_source']['username'],
               fpr,
               check_str])
+    # Process batch GCD result document ids
     for idx in BATCH_GCD_RESULTS:
       # Will be included in our disclosure
       doc = es.get(index='sshks_keys_unique_202501', id=idx)
@@ -120,19 +104,19 @@ if __name__ == '__main__':
       fpr_github = 'SHA256:' + base64.b64encode(bytes.fromhex(fpr)).decode('utf-8').replace('=', '')
       for source in sources:
         src_doc = es.get(index=source['index'], id=source['id'])
-        if source['index'] == SRC_INDEX_GITHUB:
+        if source['index'] == INDEX_USERS_GITHUB:
           writer_github.writerow([
             src_doc['_source']['username'],
             src_doc['_source']['metadata']['remoteId'],
             fpr_github,
             check_str])
-        elif source['index'] == SRC_INDEX_GITLAB:
+        elif source['index'] == INDEX_USERS_GITLAB:
           writer_gitlab.writerow([
             src_doc['_source']['username'],
             src_doc['_source']['metadata']['remoteId'],
             fpr,
             check_str])
-        elif source['index'] == SRC_INDEX_LP:
+        elif source['index'] == INDEX_USERS_LAUNCHPAD:
           writer_lp.writerow([
             src_doc['_source']['username'],
             fpr,
