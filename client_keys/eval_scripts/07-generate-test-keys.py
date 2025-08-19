@@ -17,8 +17,8 @@ from ecpy.curves import Curve, ECPyException
 from sage.all import Integer, IntegerModRing, random_prime, next_prime
 from sage.rings.finite_rings.integer_mod import IntegerMod
 
-from .lib.rfc8032 import Edwards25519Point
-from .config import *
+from lib.rfc8032 import Edwards25519Point
+from config import *
 
 
 def encode_string(s: str | bytes) -> bytes:

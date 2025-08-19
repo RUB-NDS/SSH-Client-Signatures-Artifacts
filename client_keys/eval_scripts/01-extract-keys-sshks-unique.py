@@ -11,7 +11,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import parallel_bulk, scan
 from tqdm import tqdm
 
-from .config import *
+from config import *
 
 SRC_INDICES = [INDEX_KEYS_GITHUB, INDEX_KEYS_GITLAB, INDEX_KEYS_LAUNCHPAD]
 DEST_INDEX = INDEX_KEYS_UNIQUE

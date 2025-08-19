@@ -20,8 +20,8 @@ from mpire import WorkerPool
 from mpire.utils import make_single_arguments
 from tqdm import tqdm
 
-from .lib.myssh import load_ssh_public_key, _SSHFormatDSA
-from .config import *
+from lib.myssh import load_ssh_public_key, _SSHFormatDSA
+from config import *
 
 
 MAPPINGS = {
