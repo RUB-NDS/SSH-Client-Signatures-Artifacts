@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+#
+# Usage: ./07-generate-test-keys.py
+#
+# This script generates test keys for various algorithms and key sizes,
+# that can be used to test upload restrictions on Git-based hosting services.
+# The resulting file will contain one public key entry per line, similar to the
+# authorized_keys file format of OpenSSH. Most keys are generated on the fly.
+#
 
 import base64
 import math
@@ -9,7 +17,8 @@ from ecpy.curves import Curve, ECPyException
 from sage.all import Integer, IntegerModRing, random_prime, next_prime
 from sage.rings.finite_rings.integer_mod import IntegerMod
 
-from rfc8032 import Edwards25519Point
+from .lib.rfc8032 import Edwards25519Point
+from .config import *
 
 
 def encode_string(s: str | bytes) -> bytes:
@@ -467,7 +476,7 @@ def generate_dsa_test_keys() -> list[(str, str, bytes)]:
 
 
 if __name__ == "__main__":
-    with open("results/07-test-keys.txt", "w") as f:
+    with open(f"{RESULTS_DIR}/07-test-keys.txt", "w") as f:
         test_keys = (
             generate_dsa_test_keys()
             + generate_rsa_test_keys()

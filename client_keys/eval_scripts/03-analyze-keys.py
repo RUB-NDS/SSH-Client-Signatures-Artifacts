@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+#
+# Usage: ./03-analyze-keys.py
+#
+# This script peforms in-depth analysis of all keys in the unique key index.
+# Results are saved in CSV format, with errors being logged to a separate text file.
+# The test cases are based on the Browser/CA baseline requirements for TLS certificates.
+# Scanning for batch GCD vulnerable keys is not part of this script but must be
+# invoked separately through the tool available in ../../tools/RSA-Factorability-Tool
+#
 
 import logging
 from multiprocessing import Process, Event as NewEvent, Queue
@@ -11,7 +20,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 import traceback
 from sage.all import Primes, ECM, Integer
-from rfc8032 import Edwards25519Point
+from .lib.rfc8032 import Edwards25519Point
 
 from tqdm import tqdm
 
@@ -24,28 +33,17 @@ import badkeys.checks
 from collections import defaultdict
 
 from roca.detect import RocaFingerprinter
-from fermat import fermat
+from .lib.fermat import fermat
 from json import dumps
 import csv
 
-DBINDEX = "sshks_keys_unique_202501"
+from .config import *
 
-ES_URL = [
-    "https://192.168.66.3:9200",
-    "https://192.168.66.5:9200",
-    "https://192.168.66.125:9200",
-]
-ES_CA_CERT = "ca.crt"
-ES_USER = "elastic"
-ES_PASSWORD = "<<< password >>>"
+ANALYSIS_RESULTS_OUT = f"{RESULTS_DIR}/03-analysis-results.csv"
+ANALYSIS_RESULTS_ERR_OUT = f"{RESULTS_DIR}/03-analysis-errors.txt"
 
-PARALLEL_PROCESSORS = 250
-
-ANALYSIS_RESULTS_OUT = "results/202501/03-analysis-results.csv"
-ANALYSIS_RESULTS_ERR_OUT = "results/202501/03-analysis-errors.txt"
 
 roca_fingerprinter = RocaFingerprinter()
-
 
 def test_roca_weak(n):
     result = roca_fingerprinter.has_fingerprint_dlog(n)
@@ -54,10 +52,8 @@ def test_roca_weak(n):
     else:
         return False
 
-
 def test_fermat_weak(n):
     return fermat(n)
-
 
 def ecm_try_factor(n, B1, **kwds):
     # Based on ECM.factor() from SageMath
@@ -100,7 +96,6 @@ def ecm_try_factor(n, B1, **kwds):
             pass
 
     return sorted(probable_prime_factors)
-
 
 def test_small_factors(n):
     remaining = Integer(n)
@@ -146,7 +141,6 @@ def test_small_factors(n):
     else:
         msg = msg[:-3]
     return msg, partial
-
 
 def analyze_rsa_key(key):
     issues = []
@@ -269,7 +263,6 @@ def analyze_rsa_key(key):
         return None
     return {"compromised": any([i["fatal"] for i in issues]), "issues": issues}
 
-
 def analyze_ed25519_key(key):
 
     # Trial decoding using RFC8032 decode() method.
@@ -328,7 +321,6 @@ def analyze_ed25519_key(key):
     except Exception:
         pass
     return None
-
 
 def analyze_ecdsa_key(key):
     curve = Curve.get_curve(key["params"]["curve"])
@@ -452,7 +444,6 @@ def analyze_ecdsa_key(key):
         pass
     return None
 
-
 def analyze_dsa_key(key):
     issues = []
 
@@ -565,7 +556,6 @@ def analyze_dsa_key(key):
         return None
     return {"compromised": any([i["fatal"] for i in issues]), "issues": issues}
 
-
 def analyze_key(key_hit):
     key = key_hit["_source"]
     if key["alg"] == "rsa":
@@ -579,7 +569,6 @@ def analyze_key(key_hit):
     else:
         return None
 
-
 def process(key_hit):
     try:
         result = analyze_key(key_hit)
@@ -588,10 +577,8 @@ def process(key_hit):
         err = format_exc(key_hit, e)
         return {"_key": key_hit, "_error": err}
 
-
 def format_badkeys_blocklist(blocklist):
     return f"key has been compromised, reason: {blocklist['subtest']} (badkeys blid: {str(blocklist['blid'])})"
-
 
 def format_exc(key, e):
     traceback_str = "".join(traceback.format_tb(e.__traceback__))
@@ -608,8 +595,7 @@ def format_exc(key, e):
         + traceback_str
     )
 
-
-def get_total_key_count(algorithm: str | None = None, request_timeout: int = 60) -> int:
+def get_total_key_count(algorithm: str | None = None) -> int:
     if algorithm is not None:
         query = {"match": {"alg": algorithm}}
     else:
@@ -618,18 +604,16 @@ def get_total_key_count(algorithm: str | None = None, request_timeout: int = 60)
         ES_URL,
         ca_certs=ES_CA_CERT,
         basic_auth=(ES_USER, ES_PASSWORD),
-        request_timeout=request_timeout,
+        request_timeout=ES_REQUEST_TIMEOUT,
     ) as es:
-        return es.count(index=DBINDEX, query=query)["count"]
-
+        return es.count(index=INDEX_KEYS_UNIQUE, query=query)["count"]
 
 def key_producer(
     queue: Queue,
     done: Event,
     algorithm: str | None = None,
     batchsize=100000,
-    scroll="6h",
-    request_timeout: int = 60,
+    scroll="6h"
 ):
     query = {"query": {"match_all": {}}}
     if algorithm is not None:
@@ -639,24 +623,23 @@ def key_producer(
         ES_URL,
         ca_certs=ES_CA_CERT,
         basic_auth=(ES_USER, ES_PASSWORD),
-        request_timeout=request_timeout,
+        request_timeout=ES_REQUEST_TIMEOUT,
     ) as es:
         # Adjust result window on source index to allow for larger batch sizes.
         es.indices.put_settings(
-            index=DBINDEX,
+            index=INDEX_KEYS_UNIQUE,
             body={"index.max_result_window": max(batchsize, 10000)},
         )
         for hit in scan(
             es,
-            index=DBINDEX,
+            index=INDEX_KEYS_UNIQUE,
             scroll=scroll,
             query=query,
             size=batchsize,
-            request_timeout=request_timeout,
+            request_timeout=ES_REQUEST_TIMEOUT,
         ):
             queue.put(hit)
     done.set()
-
 
 def key_consumer(queue: Queue, result_queue: Queue, done: Event):
     while not done.is_set() or not queue.empty():
@@ -679,10 +662,10 @@ if __name__ == "__main__":
     result_queue = Queue()
     done = NewEvent()
     # Start producer and consumers
-    producer = Process(target=key_producer, args=(queue, done))
+    producer = Process(target=key_producer, args=(queue, done, None, BATCH_SIZE))
     consumers = [
         Process(target=key_consumer, args=(queue, result_queue, done))
-        for _ in range(PARALLEL_PROCESSORS)
+        for _ in range(PARALLEL_WORKERS)
     ]
     producer.start()
     for consumer in consumers:

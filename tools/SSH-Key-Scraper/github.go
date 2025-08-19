@@ -6,14 +6,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Khan/genqlient/graphql"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v9/typedapi/types"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 // requestedTimespanGithub specifies the timespan which we request in a single request from the search API (30 days)

@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-
-from tqdm import tqdm
-
+#
+# Usage: ./00-dedup-users-github.py
+#
+# Helper script to remove duplicate GitHub entries in Elasticsearch based on their username.
+# For normal evaluation, this script is not required. However, if for whatever reason your
+# Elasticsearch instance ended up with duplicates, it may help to resolve this issue.
+#
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
+from tqdm import tqdm
 
-SRC_INDEX="sshks_users_github"
-DEST_INDEX="sshks_users_github_dedup"
+from .config import *
+
+SRC_INDEX=INDEX_USERS_GITHUB
+DEST_INDEX=INDEX_USERS_GITHUB + "_dedup"
 MAPPINGS={
     "properties": {
         "deleted": {
@@ -55,13 +62,9 @@ MAPPINGS={
     }
 }
 
-ES_URL="https://192.168.66.3:9200"
-ES_CA_CERT="ca.crt"
-ES_USER="elastic"
-ES_PASSWORD="<<< password >>>"
 
 class UserIterator(object):
-    def __init__(self, batchsize=5000):
+    def __init__(self, batchsize=10000):
         self.es = connect_es()
         self.batchsize = batchsize
 
@@ -120,14 +123,17 @@ def connect_es():
         ES_URL,
         ca_certs=ES_CA_CERT,
         basic_auth=(ES_USER, ES_PASSWORD),
-        request_timeout=30
+        request_timeout=ES_REQUEST_TIMEOUT
     )
     # Drop the index if it already exists.
     if not es.indices.exists(index=DEST_INDEX):
-        es.indices.create(index=DEST_INDEX, mappings=MAPPINGS, settings={"number_of_shards": 1, "number_of_replicas": 2, "max_result_window": 1000000})
+        es.indices.create(
+            index=DEST_INDEX,
+            mappings=MAPPINGS,
+            settings={"number_of_shards": NUM_SHARDS, "number_of_replicas": NUM_REPLICAS})
     return es
 
-if __name__ == "__main__":
-    iterator = UserIterator()
-    iterator.run()
 
+if __name__ == "__main__":
+    iterator = UserIterator(batchsize=BATCH_SIZE)
+    iterator.run()

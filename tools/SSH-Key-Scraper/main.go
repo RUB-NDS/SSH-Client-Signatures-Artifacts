@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/reugn/go-quartz/quartz"
-	"github.com/spf13/viper"
 	"log"
 	"os"
+
+	"github.com/elastic/go-elasticsearch/v9"
+	"github.com/reugn/go-quartz/quartz"
+	"github.com/spf13/viper"
 )
 
 func loadConfig() {
@@ -21,7 +22,10 @@ func loadConfig() {
 
 func initScheduler() (quartz.Scheduler, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
-	sched := quartz.NewStdScheduler()
+	sched, err := quartz.NewStdScheduler()
+	if err != nil {
+		log.Fatal("[!] failed to initialize quartz scheduler: %s", err.Error())
+	}
 	sched.Start(ctx)
 	return sched, ctx, cancel
 }
