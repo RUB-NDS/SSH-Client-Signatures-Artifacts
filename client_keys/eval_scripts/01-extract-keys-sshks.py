@@ -117,16 +117,7 @@ class KeyIterator(object):
                 "nested": {
                     "path": "publicKeys",
                     "query": {
-                        "bool": {
-                            "filter": {
-                                "script": {
-                                    "script": {
-                                        "source": "doc['key'].length > 0",
-                                        "lang": "painless",
-                                    }
-                                }
-                            }
-                        }
+                        "exists": { "field": "publicKeys.key" }
                     }
                 }
             }
@@ -229,7 +220,7 @@ class KeyIterator(object):
             )
 
         # At the end, write the errors to a file.
-        with open("01-extract-keys-sshks-errors.txt", "w") as f:
+        with open(f"{RESULTS_DIR}/01-extract-keys-sshks-errors.txt", "w") as f:
             f.write("Errors:\n")
             f.write("\n".join(errors))
 
@@ -346,6 +337,8 @@ def process(user_obj):
 
 
 if __name__ == "__main__":
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     for src_index, dest_index in [
         (INDEX_USERS_GITHUB, INDEX_KEYS_GITHUB),
         (INDEX_USERS_GITLAB, INDEX_KEYS_GITLAB),

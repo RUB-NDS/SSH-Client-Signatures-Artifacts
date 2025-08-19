@@ -80,7 +80,7 @@ class KeySummarizer(object):
                     scroll=self.scroll,
                     query=query,
                     size=self.batchsize,
-                    request_timeout=self.request_timeout,
+                    request_timeout=ES_REQUEST_TIMEOUT,
                 ),
                 desc="Keys retrieved",
                 total=key_cnt,
@@ -314,6 +314,8 @@ def generate_ecdsa_curve_dist(stats):
 
 STATS = defaultdict(create_stats)
 if __name__ == "__main__":
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     if not FORCE_RESCAN and os.path.exists(CSV_OUT):
         with open(CSV_OUT, "r") as fh:
             STATS = input_stats_csv(fh)
