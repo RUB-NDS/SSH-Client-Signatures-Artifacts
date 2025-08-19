@@ -7,6 +7,7 @@
 
 from collections import defaultdict
 import csv
+import os
 from json import loads, dumps
 
 from tqdm import tqdm
@@ -61,6 +62,8 @@ def count_result(alg, result, sources):
 
 
 if __name__ == "__main__":
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     with open(RESULTS_IN, "r") as f:
         csv_reader = csv.reader(f)
         row_cnt = sum(1 for _ in csv_reader)

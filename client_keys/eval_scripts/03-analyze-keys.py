@@ -20,7 +20,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 import traceback
 from sage.all import Primes, ECM, Integer
-from .lib.rfc8032 import Edwards25519Point
+from lib.rfc8032 import Edwards25519Point
 
 from tqdm import tqdm
 
@@ -655,6 +655,8 @@ def key_consumer(queue: Queue, result_queue: Queue, done: Event):
 if __name__ == "__main__":
     logging.getLogger("elastic_transport.transport").setLevel(logging.ERROR)
     badkeys.update.update_bl(True, True)
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     if os.path.exists(ANALYSIS_RESULTS_OUT):
         tqdm.write("Results file already exists. Exiting.")
         sys.exit(1)
