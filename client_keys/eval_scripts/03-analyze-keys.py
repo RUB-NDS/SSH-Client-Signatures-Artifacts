@@ -33,11 +33,11 @@ import badkeys.checks
 from collections import defaultdict
 
 from roca.detect import RocaFingerprinter
-from .lib.fermat import fermat
+from lib.fermat import fermat
 from json import dumps
 import csv
 
-from .config import *
+from config import *
 
 ANALYSIS_RESULTS_OUT = f"{RESULTS_DIR}/03-analysis-results.csv"
 ANALYSIS_RESULTS_ERR_OUT = f"{RESULTS_DIR}/03-analysis-errors.txt"

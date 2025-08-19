@@ -10,7 +10,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 from tqdm import tqdm
 
-from .config import *
+from config import *
 
 SRC_INDEX=INDEX_USERS_LAUNCHPAD
 DEST_INDEX=INDEX_USERS_LAUNCHPAD + "_dedup"

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from .config import *
+from config import *
 
 FORCE_RESCAN = False
 DBINDEX = INDEX_KEYS_UNIQUE
