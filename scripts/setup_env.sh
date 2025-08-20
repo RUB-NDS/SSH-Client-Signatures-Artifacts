@@ -55,7 +55,7 @@ function install_docker() {
     # Add Docker's official GPG key
     log "    - Adding Docker's official GPG key..."
     apt-get update 2>&1 >> $LOG_FILE
-    apt-get install ca-certificates curl 2>&1 >> $LOG_FILE
+    apt-get install -y ca-certificates curl 2>&1 >> $LOG_FILE
     install -m 0755 -d /etc/apt/keyrings 2>&1 >> $LOG_FILE
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc 2>&1 >> $LOG_FILE
     chmod a+r /etc/apt/keyrings/docker.asc 2>&1 >> $LOG_FILE
