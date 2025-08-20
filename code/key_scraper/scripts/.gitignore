@@ -1,4 +1,6 @@
+# Exclude virtual environment and python caches
 .venv
 **/__pycache__
-ca.crt
+
+# Exclude evaluation results
 results

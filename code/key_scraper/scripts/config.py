@@ -25,7 +25,7 @@ RESULTS_DIR="results"
 ##
 
 ES_URL="https://localhost:9200"
-ES_CA_CERT="ca.crt"
+ES_CA_CERT="../ca.crt"
 ES_USER="elastic"
 ES_PASSWORD="elasticsearchpass"
 ES_REQUEST_TIMEOUT=30

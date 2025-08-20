@@ -17,8 +17,8 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1
 SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
 ARTIFACTS_DIR="$SCRIPTS_DIR/.."
 cd $ARTIFACTS_DIR
-LOG_FILE="$SCRIPTS_DIR/setup_env.log"
-rm -rf $LOG_FILE && touch $LOG_FILE
+LOG_FILE="$ARTIFACTS_DIR/logs/setup_env.log"
+rm -rf $LOG_FILE && mkdir -p "$ARTIFACTS_DIR/logs" && touch $LOG_FILE
 
 function log() {
     echo -e "$1" | tee -a $LOG_FILE
@@ -50,6 +50,10 @@ if [[ $RAM_TOTAL -lt $REQUIRED_RAM ]]; then
    log "${YELLOW}[~] We recommend having at least 64GB of RAM available when running these artifacts. Running with less may impact performance.${NC}"
 fi
 
+# Check for sudo rights and keep sudo from timing out
+sudo -v
+while sleep 300; do sudo -v; done &
+
 function install_docker() {
     # Installation steps taken from https://docs.docker.com/engine/install/ubuntu/
     # Uninstall conflicting packages (should not be present)
@@ -77,8 +81,8 @@ function install_docker() {
     log "    - Installing Docker packages..."
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $LOG_FILE 2>&1
 
-    log "    - Adding user $USERNAME to the docker group..."
-    sudo usermod -aG docker $USERNAME >> $LOG_FILE 2>&1
+    log "    - Adding user $USER to the docker group..."
+    sudo usermod -aG docker $USER >> $LOG_FILE 2>&1
 }
 
 function install_golang() {
@@ -177,6 +181,12 @@ function start_elasticsearch() {
     cd $ARTIFACTS_DIR
 }
 
+function copy_elasticsearch_ca_cert() {
+    log "${GREEN}[+] Copying Elasticsearch CA certificate...${NC}"
+    sudo docker cp sshks-es01-1:/usr/share/elasticsearch/config/certs/ca/ca.crt $ARTIFACTS_DIR/code/key_scraper >> $LOG_FILE 2>&1
+    sudo chown $USER:$USER $ARTIFACTS_DIR/code/key_scraper/ca.crt
+}
+
 install_docker
 install_golang
 setup_venv
@@ -184,4 +194,7 @@ install_sagemath
 build_keyscraper
 build_nonce_sampler
 start_elasticsearch
+copy_elasticsearch_ca_cert
+# Stop the sudo background job
+kill %1
 log "${GREEN}[+] Evaluation environment ready to use! Please reboot before continuing.${NC}"
