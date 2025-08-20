@@ -73,6 +73,7 @@ services:
     depends_on:
       setup:
         condition: service_healthy
+    restart: unless-stopped
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
@@ -115,6 +116,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     depends_on:
       - es01
+    restart: unless-stopped
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata02:/usr/share/elasticsearch/data
@@ -155,6 +157,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     depends_on:
       - es02
+    restart: unless-stopped
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata03:/usr/share/elasticsearch/data
@@ -205,6 +208,7 @@ services:
         condition: service_healthy
       es03:
         condition: service_healthy
+    restart: unless-stopped
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
