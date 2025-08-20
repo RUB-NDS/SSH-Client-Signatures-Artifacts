@@ -24,12 +24,6 @@ function log() {
     echo -e "$1" | tee -a $LOG_FILE
 }
 
-# Check for root privileges
-if [[ $EUID -ne 0 ]]; then
-   log "${RED}[!] This script must be run as root.${NC}"
-   exit 1
-fi
-
 # Check Ubuntu version
 source /etc/lsb-release
 if [[ $DISTRIB_ID != "Ubuntu" || $DISTRIB_RELEASE != "24.04" ]]; then
@@ -55,33 +49,30 @@ function install_docker() {
     # Uninstall conflicting packages (should not be present)
     log "${GREEN}[+] Installing Docker...${NC}"
     log "    - Uninstalling conflicting packages..."
-    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get -y remove $pkg >> $LOG_FILE 2>&1; done
+    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get -y remove $pkg >> $LOG_FILE 2>&1; done
 
     # Receiving Docker's official GPG key
     log "    - Receiving Docker's official GPG key..."
-    apt-get update >> $LOG_FILE 2>&1
-    apt-get install -y ca-certificates curl >> $LOG_FILE 2>&1
-    install -m 0755 -d /etc/apt/keyrings >> $LOG_FILE 2>&1
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc >> $LOG_FILE 2>&1
-    chmod a+r /etc/apt/keyrings/docker.asc >> $LOG_FILE 2>&1
+    sudo apt-get update >> $LOG_FILE 2>&1
+    sudo apt-get install -y ca-certificates curl >> $LOG_FILE 2>&1
+    sudo install -m 0755 -d /etc/apt/keyrings >> $LOG_FILE 2>&1
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc >> $LOG_FILE 2>&1
+    sudo chmod a+r /etc/apt/keyrings/docker.asc >> $LOG_FILE 2>&1
 
     # Add the repository to apt sources
     log "    - Adding Docker's official APT repository..."
     echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-    tee /etc/apt/sources.list.d/docker.list >> $LOG_FILE 2>&1
-    apt-get update >> $LOG_FILE 2>&1
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update >> $LOG_FILE 2>&1
 
     # Install the Docker packages
     log "    - Installing Docker packages..."
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $LOG_FILE 2>&1
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $LOG_FILE 2>&1
 
-    # If the script got invoked by another user via sudo, we add them to the docker group
-    if [[ $SUDO_USER ]]; then
-        log "    - Adding user $SUDO_USER to the docker group..."
-        usermod -aG docker $SUDO_USER >> $LOG_FILE 2>&1
-    fi
+    log "    - Adding user $USERNAME to the docker group..."
+    sudo usermod -aG docker $USERNAME >> $LOG_FILE 2>&1
 }
 
 function install_golang() {
@@ -91,8 +82,8 @@ function install_golang() {
     log "    - Downloading Go 1.25.0..."
     wget -q https://go.dev/dl/go1.25.0.linux-amd64.tar.gz >> $LOG_FILE 2>&1
     log "    - Copying Go binaries and setting up profile..."
-    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz >> $LOG_FILE 2>&1
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz >> $LOG_FILE 2>&1
+    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee -a /etc/profile > /dev/null
     export PATH=$PATH:/usr/local/go/bin
     cd $ARTIFACTS_DIR
 }
@@ -101,8 +92,8 @@ function setup_venv() {
     log "${GREEN}[+] Setting up Python virtual environment for key scraper scripts...${NC}"
     # Install Python and pip
     log "    - Installing Python 3.11 and pip..."
-    add-apt-repository -y ppa:deadsnakes/ppa >> $LOG_FILE 2>&1
-    apt-get install -y python3.11 python3.11-venv >> $LOG_FILE 2>&1
+    sudo add-apt-repository -y ppa:deadsnakes/ppa >> $LOG_FILE 2>&1
+    sudo apt-get install -y python3.11 python3.11-venv >> $LOG_FILE 2>&1
 
     # Create a virtual environment
     log "    - Creating virtual environment..."
@@ -125,7 +116,7 @@ function install_sagemath() {
     log "${GREEN}[+] Installing SageMath 10.3 as a Python library into the virtual environment...${NC}"
     # Install SageMath dependencies
     log "    - Installing SageMath dependencies..."
-    apt-get install -y binutils make m4 perl flex python3.11 tar bc gcc libbz2-dev bzip2 g++ ca-certificates patch \
+    sudo apt-get install -y binutils make m4 perl flex python3.11 tar bc gcc libbz2-dev bzip2 g++ ca-certificates patch \
             pkg-config xz-utils libffi-dev libboost-dev libcdd-dev libcdd-tools cliquer libcliquer-dev cmake curl \
             libcurl4-openssl-dev ecl libec-dev eclib-tools gmp-ecm libecm-dev fflas-ffpack libflint-dev libfplll-dev \
             libfreetype-dev gap libgap-dev libgc-dev gengetopt libgf2x-dev gfan gfortran libgiac-dev xcas libgivaro-dev \
@@ -175,7 +166,8 @@ function build_nonce_sampler() {
 function start_elasticsearch() {
     log "${GREEN}[+] Starting Elasticsearch stack...${NC}"
     cd $ARTIFACTS_DIR/code/env_docker
-    docker compose up -d > /dev/null 2>&1
+    # User has not relogged in yet, so we need to use sudo here
+    sudo docker compose up -d > /dev/null 2>&1
     cd $ARTIFACTS_DIR
 }
 
