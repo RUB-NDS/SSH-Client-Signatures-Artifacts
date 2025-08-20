@@ -57,8 +57,8 @@ function install_docker() {
     log "    - Uninstalling conflicting packages..."
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get -y remove $pkg >> $LOG_FILE 2>&1; done
 
-    # Add Docker's official GPG key
-    log "    - Adding Docker's official GPG key..."
+    # Receiving Docker's official GPG key
+    log "    - Receiving Docker's official GPG key..."
     apt-get update >> $LOG_FILE 2>&1
     apt-get install -y ca-certificates curl >> $LOG_FILE 2>&1
     install -m 0755 -d /etc/apt/keyrings >> $LOG_FILE 2>&1
@@ -98,7 +98,7 @@ function install_golang() {
 }
 
 function setup_venv() {
-    log "${GREEN}[+] Setting up Python virtual environment for evaluation scripts...${NC}"
+    log "${GREEN}[+] Setting up Python virtual environment for key scraper scripts...${NC}"
     # Install Python and pip
     log "    - Installing Python 3.11 and pip..."
     add-apt-repository -y ppa:deadsnakes/ppa >> $LOG_FILE 2>&1
@@ -122,7 +122,7 @@ function setup_venv() {
 }
 
 function install_sagemath() {
-    log "${GREEN}[+] Installing SageMath 10.3 as a Python library...${NC}"
+    log "${GREEN}[+] Installing SageMath 10.3 as a Python library into the virtual environment...${NC}"
     # Install SageMath dependencies
     log "    - Installing SageMath dependencies..."
     apt-get install -y binutils make m4 perl flex python3.11 tar bc gcc libbz2-dev bzip2 g++ ca-certificates patch \
@@ -141,15 +141,15 @@ function install_sagemath() {
     log "    - Entering virtual environment..."
     cd $ARTIFACTS_DIR/code/key_scraper/scripts
     source .venv/bin/activate
-    log "    - Installing sage_conf 10.3 (this will take a long time)..."
-    pip install sage_conf==10.3 >> $LOG_FILE 2>&1
+    log "    - Installing sage_conf 10.3 (this will take a while)..."
+    pip install -v sage_conf==10.3 >> $LOG_FILE 2>&1
     # Install pkg wheels built by sage_conf
     log "    - Installing pkg wheels built by sage_conf..."
     pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl sage_setup==10.3 >> $LOG_FILE 2>&1
 
     # Finally, install SageMath
-    log "    - Installing sagemath-standard 10.3..."
-    pip install --no-build-isolation sagemath-standard==10.3 >> $LOG_FILE 2>&1
+    log "    - Installing sagemath-standard 10.3 (this will take a while)..."
+    pip install --no-build-isolation -v sagemath-standard==10.3 >> $LOG_FILE 2>&1
 
     log "    - Deactivating virtual environment..."
     deactivate
@@ -157,23 +157,23 @@ function install_sagemath() {
 }
 
 function build_keyscraper() {
-    # Build the SSH-Key-Scraper tool
-    log "${GREEN}[+] Building SSH-Key-Scraper tool...${NC}"
+    # Build the key_scraper tool
+    log "${GREEN}[+] Building the key_scraper tool...${NC}"
     cd $ARTIFACTS_DIR/code/key_scraper
     go build >> $LOG_FILE 2>&1
     cd $ARTIFACTS_DIR
 }
 
 function build_nonce_sampler() {
-    # Build the SSH-Client-Nonce-Sampler tool
-    log "${GREEN}[+] Building SSH-Client-Nonce-Sampler tool...${NC}"
+    # Build the nonce_sampler tool
+    log "${GREEN}[+] Building the nonce_sampler tool...${NC}"
     cd $ARTIFACTS_DIR/code/nonce_sampler
     go build >> $LOG_FILE 2>&1
     cd $ARTIFACTS_DIR
 }
 
 function start_elasticsearch() {
-    log "${GREEN}[+] Starting Elasticsearch...${NC}"
+    log "${GREEN}[+] Starting Elasticsearch stack...${NC}"
     cd $ARTIFACTS_DIR/code/env_docker
     docker compose up -d >> $LOG_FILE 2>&1
     cd $ARTIFACTS_DIR
@@ -186,3 +186,4 @@ install_sagemath
 build_keyscraper
 build_nonce_sampler
 start_elasticsearch
+log "${GREEN}[+] Evaluation environment ready to use! Please reboot before continuing.${NC}"
