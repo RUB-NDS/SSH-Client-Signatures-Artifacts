@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# ANSI color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -9,6 +10,10 @@ CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 NC='\033[0m' # No Color
 
+# Disable PIP version check
+export PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Set up variables for directories
 SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
 ARTIFACTS_DIR="$SCRIPTS_DIR/.."
 cd $ARTIFACTS_DIR
@@ -137,14 +142,14 @@ function install_sagemath() {
     cd $ARTIFACTS_DIR/client_keys/eval_scripts
     source .venv/bin/activate
     log "    - Installing sage_conf 10.3 (this will take a long time)..."
-    pip install -v sage_conf==10.3 2>&1 >> $LOG_FILE
+    pip install sage_conf==10.3 2>&1 >> $LOG_FILE
     # Install pkg wheels built by sage_conf
     log "    - Installing pkg wheels built by sage_conf..."
     pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl sage_setup==10.3 2>&1 >> $LOG_FILE
 
     # Finally, install SageMath
     log "    - Installing sagemath-standard 10.3..."
-    pip install --no-build-isolation -v sagemath-standard==10.3 2>&1 >> $LOG_FILE
+    pip install --no-build-isolation sagemath-standard==10.3 2>&1 >> $LOG_FILE
 
     log "    - Deactivating virtual environment..."
     deactivate
