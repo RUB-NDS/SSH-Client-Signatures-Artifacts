@@ -9,9 +9,10 @@ CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 NC='\033[0m' # No Color
 
-ARTIFACTS_DIR=$(dirname "$(readlink -f "$0")")
+SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
+ARTIFACTS_DIR="$SCRIPTS_DIR/.."
 cd $ARTIFACTS_DIR
-LOG_FILE="$ARTIFACTS_DIR/setup_env.log"
+LOG_FILE="$SCRIPTS_DIR/setup_env.log"
 rm -rf $LOG_FILE && touch $LOG_FILE
 
 function log() {
@@ -83,7 +84,7 @@ function install_golang() {
     log "${GREEN}[+] Installing Go 1.25.0...${NC}"
     cd /tmp
     log "    - Downloading Go 1.25.0..."
-    wget https://go.dev/dl/go1.25.0.linux-amd64.tar.gz 2>&1 >> $LOG_FILE
+    wget -q https://go.dev/dl/go1.25.0.linux-amd64.tar.gz 2>&1 >> $LOG_FILE
     log "    - Copying Go binaries and setting up profile..."
     rm -rf /usr/local/go && tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz 2>&1 >> $LOG_FILE
     echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
