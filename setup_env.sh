@@ -15,7 +15,7 @@ LOG_FILE="$ARTIFACTS_DIR/setup_env.log"
 rm -rf $LOG_FILE && touch $LOG_FILE
 
 function log() {
-    echo "$1" | tee -a $LOG_FILE
+    echo -e "$1" | tee -a $LOG_FILE
 }
 
 # Check for root privileges
@@ -173,10 +173,10 @@ function start_elasticsearch() {
     cd $ARTIFACTS_DIR
 }
 
-install_docker()
-install_golang()
-setup_venv()
-install_sagemath()
-build_keyscraper()
-build_nonce_sampler()
-start_elasticsearch()
+install_docker
+install_golang
+setup_venv
+install_sagemath
+build_keyscraper
+build_nonce_sampler
+start_elasticsearch
