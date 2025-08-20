@@ -175,7 +175,7 @@ function build_nonce_sampler() {
 function start_elasticsearch() {
     log "${GREEN}[+] Starting Elasticsearch stack...${NC}"
     cd $ARTIFACTS_DIR/code/env_docker
-    docker compose up -d >> $LOG_FILE 2>&1
+    docker compose up -d > /dev/null 2>&1
     cd $ARTIFACTS_DIR
 }
 
