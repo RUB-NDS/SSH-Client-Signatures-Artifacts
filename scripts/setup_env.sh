@@ -106,7 +106,7 @@ function setup_venv() {
 
     # Create a virtual environment
     log "    - Creating virtual environment..."
-    cd $ARTIFACTS_DIR/client_keys/eval_scripts
+    cd $ARTIFACTS_DIR/code/key_scraper/scripts
     python3.11 -m venv .venv 2>&1 >> $LOG_FILE
     log "    - Entering virtual environment..."
     source .venv/bin/activate
@@ -139,7 +139,7 @@ function install_sagemath() {
 
     # Install sage_conf first
     log "    - Entering virtual environment..."
-    cd $ARTIFACTS_DIR/client_keys/eval_scripts
+    cd $ARTIFACTS_DIR/code/key_scraper/scripts
     source .venv/bin/activate
     log "    - Installing sage_conf 10.3 (this will take a long time)..."
     pip install sage_conf==10.3 2>&1 >> $LOG_FILE
@@ -159,7 +159,7 @@ function install_sagemath() {
 function build_keyscraper() {
     # Build the SSH-Key-Scraper tool
     log "${GREEN}[+] Building SSH-Key-Scraper tool...${NC}"
-    cd $ARTIFACTS_DIR/tools/SSH-Key-Scraper
+    cd $ARTIFACTS_DIR/code/key_scraper
     go build 2>&1 >> $LOG_FILE
     cd $ARTIFACTS_DIR
 }
@@ -167,14 +167,14 @@ function build_keyscraper() {
 function build_nonce_sampler() {
     # Build the SSH-Client-Nonce-Sampler tool
     log "${GREEN}[+] Building SSH-Client-Nonce-Sampler tool...${NC}"
-    cd $ARTIFACTS_DIR/tools/SSH-Client-Nonce-Sampler
+    cd $ARTIFACTS_DIR/code/nonce_sampler
     go build 2>&1 >> $LOG_FILE
     cd $ARTIFACTS_DIR
 }
 
 function start_elasticsearch() {
     log "${GREEN}[+] Starting Elasticsearch...${NC}"
-    cd $ARTIFACTS_DIR/client_keys/env_docker
+    cd $ARTIFACTS_DIR/code/env_docker
     docker compose up -d 2>&1 >> $LOG_FILE
     cd $ARTIFACTS_DIR
 }
