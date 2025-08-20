@@ -24,6 +24,12 @@ function log() {
     echo -e "$1" | tee -a $LOG_FILE
 }
 
+# Check that the script is invoked without sudo
+if [[ $SUDO_USER ]]; then
+   log "${RED}[!] This script should not be run with sudo.${NC}"
+   exit 1
+fi
+
 # Check Ubuntu version
 source /etc/lsb-release
 if [[ $DISTRIB_ID != "Ubuntu" || $DISTRIB_RELEASE != "24.04" ]]; then
