@@ -1,6 +1,0 @@
-# Exclude virtual environment and python caches
-.venv
-**/__pycache__
-
-# Exclude evaluation results
-results
