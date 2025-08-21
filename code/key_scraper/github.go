@@ -17,8 +17,8 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-// requestedTimespanGithub specifies the timespan which we request in a single request from the search API (30 days)
-const requestedTimespanGithub = 30 * 24 * time.Hour
+// requestedTimespanGithub specifies the timespan which we request in a single request from the search API (90 days)
+const requestedTimespanGithub = 90 * 24 * time.Hour
 
 // initialCursorGithub is the creation date of the first user account on GitHub (user id 1). It is used as the start point
 // (or end point in case of reverse direction) for scraping runs
