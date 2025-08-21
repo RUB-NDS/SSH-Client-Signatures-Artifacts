@@ -1,10 +1,10 @@
 from tool.rsa.Finder import Finder
-from badkeys.badkeys.checks import checkrsa
-from badkeys.badkeys.checks import checkcrt
-from badkeys.badkeys.checks import checksshpubkey
-from badkeys.badkeys.checks import detectandcheck
-from badkeys.badkeys.scantls import scantls
-from badkeys.badkeys.scanssh import scanssh
+from badkeys.checks import checkrsa
+from badkeys.checks import checkcrt
+from badkeys.checks import checksshpubkey
+from badkeys.checks import detectandcheck
+from badkeys.scantls import scantls
+from badkeys.scanssh import scanssh
 
 
 # calls different projects and merges their results into a single dictionary
@@ -66,7 +66,7 @@ class ResultMerger:
         bad_key |= (b1 | b2 | b3 | b4 | b5)
 
         return bad_key_results, bad_key
-        
+
 
     @staticmethod
     def get_url_results(key):
@@ -80,8 +80,8 @@ class ResultMerger:
         # forward bad_key results from calls
         bad_key |= (b1 | b2)
         return url_results, bad_key
-        
-    
+
+
     @staticmethod
     def get_tls_results(key):
         # check tls port
@@ -94,7 +94,7 @@ class ResultMerger:
             result = scantls(host, port)[0]['results']
         except Exception as e:
             tls_results['error'] = str(e)
-        
+
         else:
             if result == {}:
                 tls_results['error'] = 'Not vulnerable'
@@ -204,4 +204,3 @@ class ResultMerger:
             other_key['error'] = str(e)
         return other_key, bad_key
 
-        

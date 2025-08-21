@@ -1,2 +1,14 @@
 # Exclude script logs
 logs/
+# Exclude python virtual environment and cache
+venv/
+**/__pycache__/
+
+# Exclude evaluation results
+code/key_scraper/scripts/results/
+# Exclude Elasticsearch CA certificate
+code/key_scraper/ca.crt
+
+# Exclude binaries
+code/key_scraper/SSH-Key-Scraper
+code/nonce_sampler/SSH-Client-Nonce-Sampler

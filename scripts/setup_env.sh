@@ -107,19 +107,18 @@ function setup_venv() {
 
     # Create a virtual environment
     log "    - Creating virtual environment..."
-    cd $ARTIFACTS_DIR/code/key_scraper/scripts
-    python3.11 -m venv .venv >> $LOG_FILE 2>&1
+    python3.11 -m venv venv >> $LOG_FILE 2>&1
     log "    - Entering virtual environment..."
-    source .venv/bin/activate
+    source venv/bin/activate
 
     # Install required packages
     log "    - Installing required packages..."
-    pip install -r requirements.txt >> $LOG_FILE 2>&1
+    pip install -r $ARTIFACTS_DIR/code/key_scraper/scripts/requirements.txt >> $LOG_FILE 2>&1
+    pip install -r $ARTIFACTS_DIR/code/rsa_factorability_tool/requirements.txt >> $LOG_FILE 2>&1
 
     # Deactivate the virtual environment
     log "    - Deactivating virtual environment..."
     deactivate
-    cd $ARTIFACTS_DIR
 }
 
 function install_sagemath() {
@@ -140,8 +139,7 @@ function install_sagemath() {
 
     # Install sage_conf first
     log "    - Entering virtual environment..."
-    cd $ARTIFACTS_DIR/code/key_scraper/scripts
-    source .venv/bin/activate
+    source venv/bin/activate
     log "    - Installing sage_conf 10.3 (this will take a while)..."
     pip install -v sage_conf==10.3 >> $LOG_FILE 2>&1
     # Install pkg wheels built by sage_conf
@@ -154,7 +152,6 @@ function install_sagemath() {
 
     log "    - Deactivating virtual environment..."
     deactivate
-    cd $ARTIFACTS_DIR
 }
 
 function build_keyscraper() {
