@@ -48,5 +48,7 @@ else
     log "${GREEN}[+] Found existing config.json. Skipping generation.${NC}"
 fi
 
+cd "$ARTIFACTS_DIR/code/key_scraper"
 log "${GREEN}[+] Invoking key scraper for 24 hours.${NC}"
-timeout 1d "$ARTIFACTS_DIR/code/key_scraper/SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+timeout 1d "./SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+cd -
