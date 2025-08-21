@@ -1,5 +1,7 @@
 # This file contains common configuration options for all evaluation scripts
 
+from os.path import dirname, realpath
+
 ##
 ## Processing
 ##
@@ -18,14 +20,14 @@ PARALLEL_WORKERS=16
 BULK_THREADS=16
 
 # Path to the results directory (relative or absolute)
-RESULTS_DIR="results"
+RESULTS_DIR=f"{dirname(realpath(__file__))}/../../../results"
 
 ##
 ## Elasticsearch
 ##
 
 ES_URL="https://localhost:9200"
-ES_CA_CERT="../ca.crt"
+ES_CA_CERT=f"{dirname(realpath(__file__))}/../ca.crt"
 ES_USER="elastic"
 ES_PASSWORD="elasticsearchpass"
 ES_REQUEST_TIMEOUT=30
