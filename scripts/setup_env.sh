@@ -154,6 +154,11 @@ function install_sagemath() {
     deactivate
 }
 
+function install_additional_dependencies() {
+    log "${GREEN}[+] Installing additional dependencies...${NC}"
+    sudo apt-get install -y screen >> $LOG_FILE 2>&1
+}
+
 function build_keyscraper() {
     # Build the key_scraper tool
     log "${GREEN}[+] Building the key_scraper tool...${NC}"
@@ -188,6 +193,7 @@ install_docker
 install_golang
 setup_venv
 install_sagemath
+install_additional_dependencies
 build_keyscraper
 build_nonce_sampler
 start_elasticsearch
