@@ -95,8 +95,8 @@ class KeySummarizer(object):
                 stat["outer_alg"][key["outer_alg"]] += 1
                 stat["alg"][key["alg"]] += 1
                 if key["alg"] == "rsa":
-                    stat["rsa.e"][key["params"]["e"]] += 1
-                    stat["rsa.length"][key["length"]] += 1
+                    stat["rsa.e"][str(key["params"]["e"])] += 1
+                    stat["rsa.length"][str(key["length"])] += 1
         for source in stats:
             stats[source]["alg"]["total"] = sum(stats[source]["alg"].values())
             stats[source]["outer_alg"]["total"] = sum(
@@ -205,7 +205,6 @@ def generate_rsa_modulus_dist(stats):
             )
             for source in reversed(SOURCES)
         ]
-        print(size_bin, freq_normalized)
         label, color, hatch = size_bin_to_style[size_bin]
         plt.barh(
             ["Launchpad", "GitLab", "GitHub"],
