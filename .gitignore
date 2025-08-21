@@ -6,8 +6,9 @@ venv/
 
 # Exclude evaluation results
 code/key_scraper/scripts/results/
-# Exclude Elasticsearch CA certificate
+# Exclude Elasticsearch CA certificate and scraper config
 code/key_scraper/ca.crt
+code/key_scraper/config.json
 
 # Exclude binaries
 code/key_scraper/SSH-Key-Scraper
