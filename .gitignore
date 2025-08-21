@@ -5,7 +5,7 @@ venv/
 **/__pycache__/
 
 # Exclude evaluation results
-code/key_scraper/scripts/results/
+results/
 # Exclude Elasticsearch CA certificate and scraper config
 code/key_scraper/ca.crt
 code/key_scraper/config.json
