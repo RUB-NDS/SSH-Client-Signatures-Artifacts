@@ -72,7 +72,7 @@ func main() {
 						Name:    "client-command",
 						Aliases: []string{"c"},
 						Usage:   "client command to use for connecting to the server using ECDSA user authentication (placeholders: %host% and %port%)",
-						Value:   "ssh -p %port% sample@%host%",
+						Value:   "",
 					},
 					&cli.IntFlag{
 						Name:    "timeout",
