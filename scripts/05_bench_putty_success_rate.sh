@@ -24,8 +24,12 @@ function log() {
 OUTPUT_DIR="$ARTIFACTS_DIR/results/putty_attack"
 mkdir -p $OUTPUT_DIR
 
-log "${GREEN}[+] Cloning malb/bdd-predicate from GitHub...${NC}"
-git clone https://github.com/malb/bdd-predicate
+if [ ! -d "bdd-predicate" ]; then
+    log "${GREEN}[+] Cloning malb/bdd-predicate from GitHub...${NC}"
+    git clone https://github.com/malb/bdd-predicate
+else
+    log "${GREEN}[+] bdd-predicate directory already exists${NC}"
+fi
 cd bdd-predicate
 
 log "${GREEN}[+] Pulling martinralbrecht/bdd-predicate image from Docker hub...${NC}"
