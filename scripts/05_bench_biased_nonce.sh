@@ -41,7 +41,7 @@ for i in {56..64}; do
     docker run --rm -v `pwd`:/bdd-predicate \
                -w /bdd-predicate \
                martinralbrecht/bdd-predicate \
-               sage -python ecdsa_cli.py benchmark -n 521 -k 512 -m $i -a sieve_pred -t 1024 -j 16 > $OUTPUT_DIR/bdd-sieve_pred-$i.out 2>&1
+               sage -python ecdsa_cli.py benchmark -n 521 -k 512 -m $i -a sieve_pred -t 1024 -j $(nproc) > $OUTPUT_DIR/bdd-sieve_pred-$i.out 2>&1
 done
 
 log "${GREEN}[+] Benchmarking success rate of biased nonce attack completed.${NC}"
