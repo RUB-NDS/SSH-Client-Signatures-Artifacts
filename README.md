@@ -99,7 +99,7 @@ For running the artifacts, you can use the provided scripts in the `scripts/` di
 > - Estimated time required: 24 hours
 > - Interaction required: yes, initial API token generation (estimate: 10 minutes)
 > - Other requirements: Internet access, API tokens on GitHub / GitLab
-> - Proofs claim: C1 via inspection of the scraped data
+> - Proves claim: C1 via inspection of the scraped data
 
 To collect SSH public keys from GitHub, GitLab and Launchpad, you can use the `scripts/01_run_scraper.sh` script. This script will configure and then start the key scraper and collect SSH public keys from the platforms for a duration of 24 hours. Adjust the timeout in the script as needed (or remove entirely).
 
@@ -116,7 +116,7 @@ After execution, the Elasticsearch database should be populated with user record
 > - Estimated time required: 15 minutes (depending on available CPU cores)
 > - Interaction required: no
 > - Other requirements: none
-> - Proofs claim: C2 via result files in `results/`
+> - Proves claim: C2 via result files in `results/`
 
 Once you have collected a decent amount of SSH public keys, run the evaluation by pipeline by calling `scripts/02_evaluate_keys.sh`. This script will perform a full run of the evaluation pipeline on the keys collected by the key scraper tool. In particular, it will perform the following steps:
 
@@ -140,7 +140,7 @@ All results can be found in the `results` directory after running the script. Ad
 > - Estimated time required: 15 minutes
 > - Interaction required: yes, uploading test keys to platforms (estimate: 15 minutes per platform)
 > - Other requirements: accessible account on GitHub, GitLab, and Launchpad
-> - Proofs claim: C3 by comparison between the platforms' responses and table 2 in the paper
+> - Proves claim: C3 by comparison between the platforms' responses and table 2 in the paper
 
 To test the public key upload restrictions of various platforms, you can generate SSH keys with specific properties (e.g., weak keys) and attempt to upload them to the platforms. To generate the keys, run `scripts/03_generate_test_keys.sh`. This will call the `07-generate-test-keys.py` python script and store the generated keys in the `results` directory. The resulting file contains one SSH key per line that can be copied into the corresponding SSH key upload forms on [GitHub](https://github.com/settings/ssh/new), [GitLab](https://gitlab.com/-/user_settings/ssh_keys), and Launchpad (<https://launchpad.net/~*user*/+editsshkeys>). If the key is accepted without error and is visible in the account's list of SSH keys, we consider the upload successful. Uploading each key to each platform can reproduce table 2 in the paper.
 
@@ -149,7 +149,7 @@ To test the public key upload restrictions of various platforms, you can generat
 > [!NOTE]
 > - Estimated time required: 5 - 30 minutes / client
 > - Interaction required: yes, installing clients and performing connections
-> - Proofs claim: C4 by comparison between the output of the script and table 3 in the paper
+> - Proves claim: C4 by comparison between the output of the script and table 3 in the paper
 
 To test an SSH client or agent for nonce determinism and bias, run `scripts/04_measure_client.sh`.
 The script ask for which algorithm the `nonce_sampler` tool should be invoked and whether the
@@ -240,7 +240,7 @@ in the paper may be helpful in reproducing the results:
 > [!NOTE]
 > - Estimated time required: 6 hours
 > - Interaction required: no
-> - Proofs claim: C5 by comparison between the output of the script and figure 5 in the paper
+> - Proves claim: C5 by comparison between the output of the script and figure 5 in the paper
 
 To benchmark the success rate of the PuTTY vulnerability, run `scripts/05_bench_biased_nonce.sh`.
 This will invoke the `ecdsa_cli.py` script from the [bdd-predicate](https://github.com/malb/bdd-predicate) repository with the PuTTY-specific parameters, and with a varying number of available signatures
