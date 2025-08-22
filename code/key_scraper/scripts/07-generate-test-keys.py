@@ -476,6 +476,8 @@ def generate_dsa_test_keys() -> list[(str, str, bytes)]:
 
 
 if __name__ == "__main__":
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     with open(f"{RESULTS_DIR}/07-test-keys.txt", "w") as f:
         test_keys = (
             generate_dsa_test_keys()
