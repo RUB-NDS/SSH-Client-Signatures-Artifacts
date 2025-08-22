@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/dsa"
 	"crypto/ecdsa"
+	"fmt"
 	"log"
 	"math"
 	"math/big"
@@ -179,6 +180,14 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 		return err
 	}
 
+	privKeyType := privKeySigner.PublicKey().Type()
+	if privKeyType != ssh.KeyAlgoDSA &&
+		privKeyType != ssh.KeyAlgoECDSA256 &&
+		privKeyType != ssh.KeyAlgoECDSA384 &&
+		privKeyType != ssh.KeyAlgoECDSA521 {
+		return fmt.Errorf("unsupported key type for bias analysis (only DSA / ECDSA keys are supported): %s", privKeyType)
+	}
+
 	var sigQueue *queue.Queue
 	if !agent {
 		sigQueue, err = CollectSignatures(
@@ -198,15 +207,14 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 	}
 	var nonces []*big.Int
 	var modulus *big.Int
-	switch privKeySigner.PublicKey().Type() {
-	case ssh.KeyAlgoDSA:
+	if privKeyType == ssh.KeyAlgoDSA {
 		samples := RecoverDsaNonces(sigQueue, privKey.(*dsa.PrivateKey), workers)
 		nonces = make([]*big.Int, 0, len(samples))
 		for _, sample := range samples {
 			nonces = append(nonces, sample.k)
 		}
 		modulus = privKey.(*dsa.PrivateKey).Q
-	case ssh.KeyAlgoECDSA256, ssh.KeyAlgoECDSA384, ssh.KeyAlgoECDSA521:
+	} else {
 		samples := RecoverEcdsaNonces(sigQueue, privKey.(*ecdsa.PrivateKey), workers)
 		nonces = make([]*big.Int, 0, len(samples))
 		for _, sample := range samples {
