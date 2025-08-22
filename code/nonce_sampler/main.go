@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/urfave/cli/v2"
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/urfave/cli/v2"
 )
 
 func testNonceBias(cCtx *cli.Context) error {
@@ -18,7 +19,8 @@ func testNonceBias(cCtx *cli.Context) error {
 		cCtx.String("client-command"),
 		cCtx.Int("timeout"),
 		cCtx.String("private-key-file"),
-		cCtx.Bool("agent")); err != nil {
+		cCtx.Bool("agent"),
+		cCtx.Bool("no-partial-success")); err != nil {
 		return fmt.Errorf("error running bias analysis: %w", err)
 	}
 	return nil
@@ -30,7 +32,8 @@ func testNonceDeterminism(cCtx *cli.Context) error {
 	}
 	if err := RunDeterminismAnalysis(cCtx.Int("timeout"),
 		cCtx.String("private-key-file"),
-		cCtx.Bool("agent")); err != nil {
+		cCtx.Bool("agent"),
+		cCtx.Bool("no-partial-success")); err != nil {
 		return fmt.Errorf("error running determinism analysis: %w", err)
 	}
 	return nil
@@ -83,6 +86,11 @@ func main() {
 						Usage:   "connect to the local SSH agent identified via SSH_AUTH_SOCK instead to generate signatures",
 						Value:   false,
 					},
+					&cli.BoolFlag{
+						Name:  "no-partial-success",
+						Usage: "do not indicate a partial success during authentication. use with deterministic nonces to avoid false positives.",
+						Value: false,
+					},
 				},
 				Action: testNonceBias,
 			},
@@ -107,6 +115,11 @@ func main() {
 						Aliases: []string{"a"},
 						Usage:   "connect to the local SSH agent identified via SSH_AUTH_SOCK instead to generate signatures",
 						Value:   false,
+					},
+					&cli.BoolFlag{
+						Name:  "no-partial-success",
+						Usage: "do not indicate a partial success during authentication. this may hinder detection of random nonces and is generally not recommended.",
+						Value: true,
 					},
 				},
 				Action: testNonceDeterminism,

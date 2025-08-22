@@ -3,16 +3,17 @@ package main
 import (
 	"crypto/dsa"
 	"crypto/ecdsa"
-	"github.com/fatih/color"
-	"github.com/rodaine/table"
-	"go.linecorp.com/garr/queue"
-	"golang.org/x/crypto/ssh"
 	"log"
 	"math"
 	"math/big"
 	"math/cmplx"
 	"sync"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/rodaine/table"
+	"go.linecorp.com/garr/queue"
+	"golang.org/x/crypto/ssh"
 )
 
 // sampleSignaturesContinuously samples signatures from an SSH server running on port 2200 + index.
@@ -34,11 +35,11 @@ func sampleSignaturesContinuously(index int, config *ssh.ServerConfig, cmdTempla
 // CollectSignatures collects a minimum number of signatures from SSH user authentication. The function uses a number of
 // workers to sample signatures concurrently. The number of workers should be equal to the number of CPU cores for
 // optimal performance. The function returns a queue of SampledEcdsaSignature objects containing the sampled signatures.
-func CollectSignatures(minSignatures int, workers int, cmdTemplate string, privKey *ssh.Signer, timeout int) (*queue.Queue, error) {
+func CollectSignatures(minSignatures int, workers int, cmdTemplate string, privKey *ssh.Signer, timeout int, noPartialSuccess bool) (*queue.Queue, error) {
 	wg := sync.WaitGroup{}
 	timeStart := time.Now()
 	sigQueue := queue.DefaultQueue()
-	config, err := ConstructServerConfig(&sigQueue, privKey)
+	config, err := ConstructServerConfig(&sigQueue, privKey, noPartialSuccess)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +169,7 @@ func testSampledNonceBias(nonceSamples []*big.Int, modulus *big.Int) bool {
 // fails or if an error occurs during signature collection or nonce recovery. The function uses a number of workers to
 // process the signatures concurrently. The number of workers should be equal to the number of CPU cores for optimal
 // performance.
-func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout int, privKeyFile string, agent bool) error {
+func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout int, privKeyFile string, agent bool, noPartialSuccess bool) error {
 	privKey, err := LoadPrivateKeyFromFile(privKeyFile)
 	if err != nil {
 		return err
@@ -185,7 +186,8 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 			workers,
 			cmdTemplate,
 			&privKeySigner,
-			timeout)
+			timeout,
+			noPartialSuccess)
 	} else {
 		agentSigQueue := queue.DefaultQueue()
 		err = SampleAgentSignatures(minSignatures, false, &agentSigQueue, privKey)

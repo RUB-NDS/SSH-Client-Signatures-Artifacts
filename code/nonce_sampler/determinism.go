@@ -9,14 +9,15 @@ import (
 	"crypto/sha512"
 	"encoding/binary"
 	"encoding/hex"
-	"filippo.io/edwards25519"
 	"fmt"
-	"go.linecorp.com/garr/queue"
-	"golang.org/x/crypto/ssh"
 	"log"
 	"math/big"
 	"sync"
 	"time"
+
+	"filippo.io/edwards25519"
+	"go.linecorp.com/garr/queue"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
@@ -487,7 +488,7 @@ func checkDeterminismEd25519(nonces []*SampledEd25519Nonce, privKey *ed25519.Pri
 	return NonceRandomlyGenerated
 }
 
-func RunDeterminismAnalysis(timeout int, privKeyFile string, agent bool) error {
+func RunDeterminismAnalysis(timeout int, privKeyFile string, agent bool, noPartialSuccess bool) error {
 	privKey, err := LoadPrivateKeyFromFile(privKeyFile)
 	if err != nil {
 		return err
@@ -498,7 +499,7 @@ func RunDeterminismAnalysis(timeout int, privKeyFile string, agent bool) error {
 	}
 	sigQueue := queue.DefaultQueue()
 	if !agent {
-		config, err := ConstructServerConfig(&sigQueue, &privKeySigner)
+		config, err := ConstructServerConfig(&sigQueue, &privKeySigner, noPartialSuccess)
 		if err != nil {
 			return err
 		}
