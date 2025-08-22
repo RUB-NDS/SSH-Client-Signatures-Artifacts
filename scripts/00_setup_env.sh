@@ -156,7 +156,7 @@ function install_sagemath() {
 
 function install_additional_dependencies() {
     log "${GREEN}[+] Installing additional dependencies...${NC}"
-    sudo apt-get install -y screen >> $LOG_FILE 2>&1
+    sudo apt-get install -y screen git >> $LOG_FILE 2>&1
 }
 
 function build_keyscraper() {

@@ -41,5 +41,6 @@ python $ARTIFACTS_DIR/code/key_scraper/scripts/05-compile-results.py | tee -a $L
 # 6. Collect the affected users
 log "${GREEN}[+] Collecting affected users...${NC}"
 python $ARTIFACTS_DIR/code/key_scraper/scripts/06-collect-affected-users.py | tee -a $LOG_FILE
+log "${GREEN}[+] Done. You may now inspect the scripts' outputs in the results directory.${NC}"
 
 deactivate

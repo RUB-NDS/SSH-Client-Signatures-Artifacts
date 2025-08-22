@@ -25,5 +25,6 @@ source "$ARTIFACTS_DIR/venv/bin/activate"
 
 log "${GREEN}[+] Generating test SSH keys...${NC}"
 python $ARTIFACTS_DIR/code/key_scraper/scripts/07-generate-test-keys.py | tee -a $LOG_FILE
+log "${GREEN}[+] Generation complete. Proceed by uploading the keys in results/07-test-keys.txt to each platform.${NC}"
 
 deactivate
