@@ -119,7 +119,7 @@ func main() {
 					&cli.BoolFlag{
 						Name:  "no-partial-success",
 						Usage: "do not indicate a partial success during authentication. this may hinder detection of random nonces and is generally not recommended.",
-						Value: true,
+						Value: false,
 					},
 				},
 				Action: testNonceDeterminism,
