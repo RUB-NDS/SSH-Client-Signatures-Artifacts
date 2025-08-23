@@ -78,32 +78,20 @@ select MODE in "client" "agent"; do
             log "${GREEN}[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the client...${NC}"
             log "    => Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
             $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler determinism -k $KEY_PATH -t 30000
-            break
-            ;;
-        "agent")
-            log "${GREEN}[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the agent...${NC}"
-            log "    => Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
-            read -r
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler determinism -k $KEY_PATH -t 30000 -a
-            break
-            ;;
-        *)
-            log "${RED}[!] Invalid selection. Please try again.${NC}"
-            ;;
-    esac
-    log "${GREEN}[+] Determinism measurement completed. Starting bias measurement...${NC}"
-    case $MODE in
-        "client")
+            log "${GREEN}[+] Determinism measurement completed. Starting bias measurement...${NC}"
             log "${GREEN}[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the client...${NC}"
             log "    => Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
             $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler bias -j 1 -n 1000 -k $KEY_PATH -t 30000
             break
             ;;
         "agent")
-            log "[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the agent..."
-            log "[+] Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
+            log "${GREEN}[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the agent...${NC}"
+            log "    => Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
             read -r
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler bias -j 1 -n 1000 -k $KEY_PATH -t 30000 -a
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler determinism -k $KEY_PATH -t 30000 -a
+            log "${GREEN}[+] Determinism measurement completed. Starting bias measurement...${NC}"
+            log "${GREEN}[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the agent...${NC}"
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler bias -j 1 -n 1000 -k $KEY_PATH -t 30000 -a
             break
             ;;
         *)
