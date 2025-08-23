@@ -23,7 +23,7 @@ function log() {
 
 # Check if the keys directory is already present, if not, create it and generate SSH keys
 if [ ! -d "$ARTIFACTS_DIR/code/nonce_sampler/keys" ]; then
-    log "${Yellow}[~] No previously generated keys found under code/nonce_sampler/keys. Generating new ones..."
+    log "${YELLOW}[~] No previously generated keys found under code/nonce_sampler/keys. Generating new ones...${NC}"
     mkdir -p "$ARTIFACTS_DIR/code/nonce_sampler/keys"
     log "    - Generating DSA key pair id_dsa..."
     ssh-keygen -t dsa -f "$ARTIFACTS_DIR/code/nonce_sampler/keys/id_dsa" -N "" >> $LOG_FILE 2>&1
@@ -36,12 +36,12 @@ if [ ! -d "$ARTIFACTS_DIR/code/nonce_sampler/keys" ]; then
     log "    - Generating Ed25519 key pair id_ed25519..."
     ssh-keygen -t ed25519 -f "$ARTIFACTS_DIR/code/nonce_sampler/keys/id_ed25519" -N "" >> $LOG_FILE 2>&1
 else
-    log "${GREEN}[+] Previously generated keys found under code/nonce_sampler/keys. Using existing keys..."
+    log "${GREEN}[+] Previously generated keys found under code/nonce_sampler/keys. Using existing keys...${NC}"
 fi
 
 # Let the user select which algorithm to test
 ALGORITHMS=("DSA" "ECDSA NIST P-256" "ECDSA NIST P-384" "ECDSA NIST P-521" "Ed25519")
-log "[?] Select the public key algorithm to test:"
+log "${CYAN}[?] Select the public key algorithm to test:${NC}"
 select ALGO in "${ALGORITHMS[@]}"; do
     case $ALGO in
         "DSA")
@@ -65,49 +65,49 @@ select ALGO in "${ALGORITHMS[@]}"; do
             break
             ;;
         *)
-            echo "Invalid selection. Please try again."
+            log "${RED}[!] Invalid selection. Please try again.${NC}"
             ;;
     esac
 done
-log "[+] Selected public key algorithm: $ALGO (key path: $KEY_PATH)"
+log "${GREEN}[+] Selected public key algorithm: $ALGO (key path: $(realpath $KEY_PATH))${NC}"
 
-log "[?] Select the test mode:"
+log "${CYAN}[?] Select the test mode:${NC}"
 select MODE in "client" "agent"; do
     case $MODE in
         "client")
-            log "[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the client..."
-            log "[+] Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler -k $KEY_PATH -t 30000
+            log "${GREEN}[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the client...${NC}"
+            log "    => Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler determinism -k $KEY_PATH -t 30000
             break
             ;;
         "agent")
-            log "[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the agent..."
-            log "[+] Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
+            log "${GREEN}[+] Starting nonce_sampler in determinism mode to detect nonce generation method of the agent...${NC}"
+            log "    => Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
             read -r
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler -k $KEY_PATH -t 30000 -a
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler determinism -k $KEY_PATH -t 30000 -a
             break
             ;;
         *)
-            log "Invalid selection. Please try again."
+            log "${RED}[!] Invalid selection. Please try again.${NC}"
             ;;
     esac
-    log "[+] Determinism measurement completed. Starting bias measurement..."
+    log "${GREEN}[+] Determinism measurement completed. Starting bias measurement...${NC}"
     case $MODE in
         "client")
-            log "[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the client..."
-            log "[+] Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler -j 1 -n 1000 -k $KEY_PATH -t 30000
+            log "${GREEN}[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the client...${NC}"
+            log "    => Please connect your client to port 2200 with the appropriate key configured for authentication. Once connected, terminate the connection after a few seconds."
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Client-Nonce-Sampler bias -j 1 -n 1000 -k $KEY_PATH -t 30000
             break
             ;;
         "agent")
             log "[+] Starting nonce_sampler in bias mode to detect potential nonce bias of the agent..."
             log "[+] Make sure your SSH agent is running and available via SSH_AUTH_SOCK. Continue by pressing enter."
             read -r
-            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler -j 1 -n 1000 -k $KEY_PATH -t 30000 -a
+            $ARTIFACTS_DIR/code/nonce_sampler/SSH-Agent-Nonce-Sampler bias -j 1 -n 1000 -k $KEY_PATH -t 30000 -a
             break
             ;;
         *)
-            log "Invalid selection. Please try again."
+            log "${RED}[!] Invalid selection. Please try again.${NC}"
             ;;
     esac
 done

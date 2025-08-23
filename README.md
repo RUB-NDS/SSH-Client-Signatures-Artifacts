@@ -151,7 +151,7 @@ To test the public key upload restrictions of various platforms, you can generat
 > - Interaction required: yes, installing clients and performing connections
 > - Proves claim: C4 by comparison between the output of the script and table 3 in the paper
 
-To test an SSH client or agent for nonce determinism and bias, run `scripts/04_measure_client.sh`.
+To test an SSH client or agent for nonce determinism and bias, run `scripts/04_measure_client_agent.sh`.
 The script ask for which algorithm the `nonce_sampler` tool should be invoked and whether the
 implementation to test is a client or agent.
 
@@ -271,7 +271,7 @@ The data points should closely resemble the ones reported in the paper in figure
 │   ├── 01_run_scraper.sh          # Runs the key_scraper tool on GitHub, Gitlab, and Launchpad for 24 hours
 │   ├── 02_evaluate_keys.sh        # Performs a full run of the evaluation pipeline on the keys collected by the key_scraper tool
 │   ├── 03_generate_test_keys.sh   # Generates test keys for testing public key upload restrictions
-│   ├── 04_measure_client.sh       # Runs the nonce_sampler tool to measure client nonce determinism and bias
+│   ├── 04_measure_client_agent.sh # Runs the nonce_sampler tool to measure client nonce determinism and bias
 │   └── 05_bench_biased_nonce.sh   # Benchmarks the success rate of the PuTTY vulnerability as described in the paper
 └── README.md
 ```
