@@ -181,18 +181,18 @@ ssh -i code/nonce_sampler/keys/id_ecdsa_nistp256 -p 2200 sample@localhost
 
 If agent is selected, the tool will automatically try to connect to the UNIX socket
 given by the $SSH_AUTH_SOCK environment variable. Make sure the SSH agent is running
-and that the key corresponding to the selected key algorithm is loaded in the agent
-before running the script. To test a Windows-based agent, connect to the VM via
-SSH with agent forwarding enabled. This will automatically set the $SSH_AUTH_SOCK
-in the shell session.
+before running the script. The tool will try to load the corresponding key into the
+agent using the SSH agent protocol. If the agent uses preconfigured keys only,
+make sure to load the key before running the script. To test a Windows-based agent,
+connect to the VM via SSH with agent forwarding enabled. This will automatically
+set the $SSH_AUTH_SOCK in the shell session.
 
-As an example, the following commands can be used to start the OpenSSH ssh-agent
-and add all automatically generated keys. For keys to be available, run the
-script once until key algorithm selection.
+As an example, the following commands can be used to start the OpenSSH ssh-agent.
+ssh-agent support adding keys dynamically through the SSH agent protocol.
+Hence, adding the keys before running the script is not necessary.
 
 ```bash
 eval "$(ssh-agent -s)"
-ssh-add code/nonce_sampler/keys/id_ecdsa_nistp256
 ```
 
 When testing PuTTY 0.80, the script should output a biased nonce with
