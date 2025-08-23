@@ -26,7 +26,7 @@ Make sure Golang 1.23.0 or newer is available. To build the tool, simply run
 
 ## Usage
 
-```bash
+```text
 $ ./SSH-Client-Nonce-Sampler --help
 NAME:
    ssh-client-nonce-sampler - Test your SSH client's signature
@@ -46,7 +46,7 @@ GLOBAL OPTIONS:
    --help, -h  show help
 ```
 
-```bash
+```text
 $ ./SSH-Client-Nonce-Sampler.exe bias --help
 NAME:
    ssh-client-nonce-sampler bias - sample nonces and test for bias
@@ -65,7 +65,7 @@ OPTIONS:
    --help, -h                            show help
 ```
 
-```bash
+```text
 $ ./SSH-Client-Nonce-Sampler.exe determinism --help
 NAME:
    ssh-client-nonce-sampler determinism - sample two nonces from the same connection and test for determinism

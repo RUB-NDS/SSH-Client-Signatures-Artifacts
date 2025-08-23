@@ -6,7 +6,7 @@ This tool is designed to collect SSH public keys from Git-based platforms
 such as GitHub, GitLab, and Launchpad. The tool supports both full and
 incremental runs.
 
->![WARNING]
+> [!WARNING]
 > GitLab has recently implemented API restrictions to the Users API used
 > by the GitLab scraping component. This will cause a significant reduction
 > in collection speed. For more information, see [the announcement by GitLab](https://about.gitlab.com/blog/rate-limitations-announced-for-projects-groups-and-users-apis/).
