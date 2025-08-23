@@ -1,4 +1,6 @@
-# Biased Nonce Attack on PuTTY P-521 Signatures
+# On the Security of SSH Client Signatures - Artifacts
+
+## Biased Nonce Attack on PuTTY P-521 Signatures
 
 To verify the attack, we used the following implementation:
 
