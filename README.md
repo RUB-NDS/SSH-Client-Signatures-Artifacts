@@ -137,8 +137,8 @@ All results can be found in the `results` directory after running the script. Ad
 ### E3 - Testing Public Key Upload Restrictions
 
 > [!NOTE]
-> - Estimated time required: 15 minutes
-> - Interaction required: yes, uploading test keys to platforms (estimate: 15 minutes per platform)
+> - Estimated time required: 1 hour
+> - Interaction required: yes, uploading test keys to platforms (estimate: 20 minutes per platform)
 > - Other requirements: accessible account on GitHub, GitLab, and Launchpad
 > - Proves claim: C3 by comparison between the platforms' responses and table 2 in the paper
 
