@@ -205,35 +205,35 @@ We cannot provide the SSH clients used for testing as part of these artifacts
 due to licensing restrictions. However, the following table based on table 3
 in the paper may be helpful in reproducing the results:
 
-| Name                | Version   | OS      | Nonce Scheme                          | Download Link                                                                                               |
-|---------------------|-----------|---------|---------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| AbsoluteTelnet      | 12.16     | Windows | *Not RFC 6979 / k_proto*              | [Link](https://www.celestialsoftware.net/telnet/AbsoluteTelnet12.16.exe)                                    |
-| AsyncSSH            | 2.18.0    | Linux   | Random                                | [Link](https://github.com/ronf/asyncssh/archive/refs/tags/v2.18.0.zip)                                      |
-| Bitvise             | 9.42      | Windows | *Not RFC 6979 / k_proto*              | [Link](https://dl.bitvise.com/BvSshClient-942.exe)                                                          |
-| Cyberduck           | 9.0.1     | Windows | Random                                | [Link](https://update.cyberduck.io/windows/Cyberduck-Installer-9.0.1.41941.exe)                             |
-| Dropbear            | 2024.86   | Linux   | Random                                | [Link](https://github.com/mkj/dropbear/archive/refs/tags/DROPBEAR_2024.86.zip)                              |
-| Erlang/OTP SSH      | 5.2.1     | Linux   | *Not RFC 6979 / k_proto*              | [Link](https://github.com/erlang/otp/archive/refs/tags/OTP-27.0.1.zip)                                      |
-| FileZilla           | 3.67.0    | Windows | Random                                | [Link](https://filezilla-project.org/download.php?show_all=1) *current version only*                        |
-| Golang x/crypto/ssh | 0.29.0    | Windows | Optional (Any)                        | [Link](https://github.com/golang/crypto/archive/refs/tags/v0.29.0.zip)                                      |
-| libssh              | 0.11.1    | Linux   | Random (OpenSSL) / RFC 6979 (MBedTLS) | [Link](https://www.libssh.org/files/0.11/libssh-0.11.1.tar.xz)                                              |
-| OpenSSH Portable    | 9.9p1     | Linux   | Random                                | [Link](https://github.com/openssh/openssh-portable/archive/refs/tags/V_9_9_P1.zip)                          |
-| OpenSSH Portable    | 9.9p1     | MacOS   | Random                                | [Link](https://github.com/apple-oss-distributions/OpenSSH/archive/refs/tags/OpenSSH-346.zip)                |
-| Paramiko            | 3.5.0     | Linux   | Random                                | [Link](https://github.com/paramiko/paramiko/archive/refs/tags/3.5.0.zip)                                    |
-| PKIX-SSH            | 15.3      | Linux   | Random                                | [Link](https://gitlab.com/secsh/pkixssh/-/archive/v15.3/pkixssh-v15.3.zip)                                  |
-| PortX               | 2.2.12    | MacOS   | Random                                | [Link](https://apps.apple.com/us/app/portx-ssh-sftp-client/id1566480505) *current version only*             |
-| PuTTY               | 0.80      | Windows | k_proto                               | [Link](https://the.earth.li/~sgtatham/putty/0.80/w64/putty-64bit-0.80-installer.msi)                        |
-| PuTTY               | 0.81      | Windows | RFC 6979                              | [Link](https://the.earth.li/~sgtatham/putty/0.81/w64/putty-64bit-0.81-installer.msi)                        |
-| SecureCRT           | 9.5.2     | Windows | Random                                | [Link](https://www.vandyke.com/cgi-bin/releases.php?product=securecrt) *current version only*               |
-| Secure Shellfish    | 2025.17   | MacOS   | *Not RFC 6979 / k_proto*              | [Link](https://apps.apple.com/de/app/ssh-files-secure-shellfish/id1336634154) *current version only*        |
-| ServerCat           | 1.18      | MacOS   | *Not RFC 6979 / k_proto*              | [Link](https://apps.apple.com/de/app/servercat-ssh-terminal/id1501532023) *current version only*            |
-| SSH Term            | 7.0.26    | MacOS   | *Not RFC 6979 / k_proto*              | [Link]([S](https://apps.apple.com/d3/app/ssh-term-secure-remote-shell/id1638226840)) *current version only* |
-| Tectia SSH          | 6.6.3.490 | Windows | Random                                | [Link](https://info.ssh.com/tectia-ssh-client-server-trial-download) *current version only* / *trial*       |
-| Tera Term           | 5.2       | Windows | Random                                | [Link](https://github.com/TeraTermProject/teraterm/releases/download/v5.2/teraterm-5.2.exe)                 |
-| Termius             | 9.8.5     | Linux   | Random                                | [Link](https://www.termius.com/download/linux/Termius.deb) *current version only*                           |
-| Termius             | 9.21.2    | MacOS   | Random                                | [Link](https://apps.apple.com/de/app/termius-modern-ssh-client/id549039908) *current version only*          |
-| Win32 OpenSSH       | 9.5.0.0   | Windows | Random                                | [Link](https://github.com/PowerShell/Win32-OpenSSH/archive/refs/tags/v9.5.0.0p1-Beta.zip)                   |
-| WinSCP              | 6.3.4     | Windows | RFC 6979                              | [Link](https://sourceforge.net/projects/winscp/files/WinSCP/6.5.2/WinSCP-6.5.2-Setup.exe/download)          |
-| XShell 7            | 0170      | Windows | Random                                | [Link](https://www.netsarang.com/en/xshell-download/) *current version only* / *trial*                      |
+| Name                | Version   | OS      | Nonce Scheme                          | Download Link                                                                                            |
+|---------------------|-----------|---------|---------------------------------------|----------------------------------------------------------------------------------------------------------|
+| AbsoluteTelnet      | 12.16     | Windows | *Not RFC 6979 / k_proto*              | [Link](https://www.celestialsoftware.net/telnet/AbsoluteTelnet12.16.exe)                                 |
+| AsyncSSH            | 2.18.0    | Linux   | Random                                | [Link](https://github.com/ronf/asyncssh/archive/refs/tags/v2.18.0.zip)                                   |
+| Bitvise             | 9.42      | Windows | *Not RFC 6979 / k_proto*              | [Link](https://dl.bitvise.com/BvSshClient-942.exe)                                                       |
+| Cyberduck           | 9.0.1     | Windows | Random                                | [Link](https://update.cyberduck.io/windows/Cyberduck-Installer-9.0.1.41941.exe)                          |
+| Dropbear            | 2024.86   | Linux   | Random                                | [Link](https://github.com/mkj/dropbear/archive/refs/tags/DROPBEAR_2024.86.zip)                           |
+| Erlang/OTP SSH      | 5.2.1     | Linux   | *Not RFC 6979 / k_proto*              | [Link](https://github.com/erlang/otp/archive/refs/tags/OTP-27.0.1.zip)                                   |
+| FileZilla           | 3.67.0    | Windows | Random                                | [Link](https://filezilla-project.org/download.php?show_all=1) (*current version only*)                   |
+| Golang x/crypto/ssh | 0.29.0    | Windows | Optional (Any)                        | [Link](https://github.com/golang/crypto/archive/refs/tags/v0.29.0.zip)                                   |
+| libssh              | 0.11.1    | Linux   | Random (OpenSSL) / RFC 6979 (MBedTLS) | [Link](https://www.libssh.org/files/0.11/libssh-0.11.1.tar.xz)                                           |
+| OpenSSH Portable    | 9.9p1     | Linux   | Random                                | [Link](https://github.com/openssh/openssh-portable/archive/refs/tags/V_9_9_P1.zip)                       |
+| OpenSSH Portable    | 9.9p1     | MacOS   | Random                                | [Link](https://github.com/apple-oss-distributions/OpenSSH/archive/refs/tags/OpenSSH-346.zip)             |
+| Paramiko            | 3.5.0     | Linux   | Random                                | [Link](https://github.com/paramiko/paramiko/archive/refs/tags/3.5.0.zip)                                 |
+| PKIX-SSH            | 15.3      | Linux   | Random                                | [Link](https://gitlab.com/secsh/pkixssh/-/archive/v15.3/pkixssh-v15.3.zip)                               |
+| PortX               | 2.2.12    | MacOS   | Random                                | [Link](https://apps.apple.com/us/app/portx-ssh-sftp-client/id1566480505) (*current version only*)        |
+| PuTTY               | 0.80      | Windows | k_proto                               | [Link](https://the.earth.li/~sgtatham/putty/0.80/w64/putty-64bit-0.80-installer.msi)                     |
+| PuTTY               | 0.81      | Windows | RFC 6979                              | [Link](https://the.earth.li/~sgtatham/putty/0.81/w64/putty-64bit-0.81-installer.msi)                     |
+| SecureCRT           | 9.5.2     | Windows | Random                                | [Link](https://www.vandyke.com/cgi-bin/releases.php?product=securecrt) (*current version only*)          |
+| Secure Shellfish    | 2025.17   | MacOS   | *Not RFC 6979 / k_proto*              | [Link](https://apps.apple.com/de/app/ssh-files-secure-shellfish/id1336634154) (*current version only*)   |
+| ServerCat           | 1.18      | MacOS   | *Not RFC 6979 / k_proto*              | [Link](https://apps.apple.com/de/app/servercat-ssh-terminal/id1501532023) (*current version only*)       |
+| SSH Term            | 7.0.26    | MacOS   | *Not RFC 6979 / k_proto*              | [Link](https://apps.apple.com/d3/app/ssh-term-secure-remote-shell/id1638226840) (*current version only*) |
+| Tectia SSH          | 6.6.3.490 | Windows | Random                                | [Link](https://info.ssh.com/tectia-ssh-client-server-trial-download) (*current version only* / *trial*)  |
+| Tera Term           | 5.2       | Windows | Random                                | [Link](https://github.com/TeraTermProject/teraterm/releases/download/v5.2/teraterm-5.2.exe)              |
+| Termius             | 9.8.5     | Linux   | Random                                | [Link](https://www.termius.com/download/linux/Termius.deb) (*current version only*)                      |
+| Termius             | 9.21.2    | MacOS   | Random                                | [Link](https://apps.apple.com/de/app/termius-modern-ssh-client/id549039908) (*current version only*)     |
+| Win32 OpenSSH       | 9.5.0.0   | Windows | Random                                | [Link](https://github.com/PowerShell/Win32-OpenSSH/archive/refs/tags/v9.5.0.0p1-Beta.zip)                |
+| WinSCP              | 6.3.4     | Windows | RFC 6979                              | [Link](https://sourceforge.net/projects/winscp/files/WinSCP/6.5.2/WinSCP-6.5.2-Setup.exe/download)       |
+| XShell 7            | 0170      | Windows | Random                                | [Link](https://www.netsarang.com/en/xshell-download/) (*current version only* / *trial*)                 |
 
 ### E5 - PuTTY Vulnerability Success Rate Benchmarking
 
