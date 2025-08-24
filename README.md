@@ -199,13 +199,14 @@ When testing PuTTY 0.80, the script should output a biased nonce with
 the top 9 bits of the nonce being zero all the time and k_proto for the
 nonce generation method. For all other clients tested, the tool should not
 report any bias, while reporting the nonce generation method as in table 3
-in the paper.
+in the paper. Similarly, the nonce generation method of an agent should
+coincide with the one given in table 4.
 
-We cannot provide the SSH clients used for testing as part of these artifacts
-due to licensing restrictions. However, the following table based on table 3
-in the paper may be helpful in reproducing the results:
+We cannot provide the tested SSH clients and agents as part of these artifacts
+due to licensing restrictions. However, the following tables based on tables 3
+and 4 in the paper may be helpful in reproducing the results:
 
-| Name                | Version   | OS      | Nonce Scheme                          | Download Link                                                                                            |
+| Client Name         | Version   | OS      | Nonce Scheme                          | Download Link                                                                                            |
 |---------------------|-----------|---------|---------------------------------------|----------------------------------------------------------------------------------------------------------|
 | AbsoluteTelnet      | 12.16     | Windows | *Not RFC 6979 / k_proto*              | [Link](https://www.celestialsoftware.net/telnet/AbsoluteTelnet12.16.exe)                                 |
 | AsyncSSH            | 2.18.0    | Linux   | Random                                | [Link](https://github.com/ronf/asyncssh/archive/refs/tags/v2.18.0.zip)                                   |
@@ -234,6 +235,23 @@ in the paper may be helpful in reproducing the results:
 | Win32 OpenSSH       | 9.5.0.0   | Windows | Random                                | [Link](https://github.com/PowerShell/Win32-OpenSSH/archive/refs/tags/v9.5.0.0p1-Beta.zip)                |
 | WinSCP              | 6.3.4     | Windows | RFC 6979                              | [Link](https://sourceforge.net/projects/winscp/files/WinSCP/6.5.2/WinSCP-6.5.2-Setup.exe/download)       |
 | XShell 7            | 0170      | Windows | Random                                | [Link](https://www.netsarang.com/en/xshell-download/) (*current version only* / *trial*)                 |
+
+| Agent Name      | Version   | OS      | Nonce Scheme       | Download Link                                                                                                             |
+|-----------------|-----------|---------|--------------------|---------------------------------------------------------------------------------------------------------------------------|
+| 1Password       | 8.10.56   | Linux   | *No (EC)DSA support* | [Link](https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb) (*current version only* / *trial*) |
+| GnuPG           | 2.4.4     | Linux   | RFC 6979           | [Link](https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.4.tar.bz2)                                                            |
+| Goldwarden      | 0.3.6     | Linux   | Random             | [Link](https://github.com/quexten/goldwarden/releases/download/v0.3.6/goldwarden_0.3.6_amd64.deb)                         |
+| KeeAgent        | 0.13.8    | Linux   | Random             | [Link](https://github.com/dlech/KeeAgent/releases/download/v0.13.8/KeeAgent_v0.13.8.zip)                                  |
+| MobaXTerm       | 24.4      | Windows | RFC 6979           | [Link](https://download.mobatek.net/2522025040602403/MobaXterm_Portable_v25.2.zip) (*current version only*)               |
+| OpenSSH         | 9.6p1     | Linux   | Random             | [Link](https://github.com/openssh/openssh-portable/archive/refs/tags/V_9_6_P1.zip)                                        |
+| PKIX-SSH        | 15.3      | Linux   | Random             | [Link](https://gitlab.com/secsh/pkixssh/-/archive/v15.3/pkixssh-v15.3.zip)                                                |
+| PuTTY Pageant   | 0.80      | Windows | k_proto            | [Link](https://the.earth.li/~sgtatham/putty/0.80/w64/putty-64bit-0.80-installer.msi)                                      |
+| PuTTY Pageant   | 0.81      | Windows | RFC 6979           | [Link](https://the.earth.li/~sgtatham/putty/0.81/w64/putty-64bit-0.81-installer.msi)                                      |
+| SecureCRT       | 9.5.2     | Windows | Random             | [Link](https://www.vandyke.com/cgi-bin/releases.php?product=securecrt) (*current version only*)                           |
+| Tectia SSH      | 6.6.3.490 | Windows | Random             | [Link](https://info.ssh.com/tectia-ssh-client-server-trial-download) (*current version only* / *trial*)                   |
+| Termius         | 9.9.0     | Linux   | Random             | [Link](https://www.termius.com/download/linux/Termius.deb) (*current version only*)                                       |
+| Win32 OpenSSH   | 9.5.0.0   | Windows | Random             | [Link](https://github.com/PowerShell/Win32-OpenSSH/archive/refs/tags/v9.5.0.0p1-Beta.zip)                                 |
+| XShell 7 Xagent | 0170      | Windows | Random             | [Link](https://www.netsarang.com/en/xshell-download/) (*current version only* / *trial*)                                  |
 
 ### E5 - PuTTY Vulnerability Success Rate Benchmarking
 
