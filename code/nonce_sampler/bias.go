@@ -3,16 +3,18 @@ package main
 import (
 	"crypto/dsa"
 	"crypto/ecdsa"
-	"github.com/fatih/color"
-	"github.com/rodaine/table"
-	"go.linecorp.com/garr/queue"
-	"golang.org/x/crypto/ssh"
+	"fmt"
 	"log"
 	"math"
 	"math/big"
 	"math/cmplx"
 	"sync"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/rodaine/table"
+	"go.linecorp.com/garr/queue"
+	"golang.org/x/crypto/ssh"
 )
 
 // sampleSignaturesContinuously samples signatures from an SSH server running on port 2200 + index.
@@ -34,11 +36,11 @@ func sampleSignaturesContinuously(index int, config *ssh.ServerConfig, cmdTempla
 // CollectSignatures collects a minimum number of signatures from SSH user authentication. The function uses a number of
 // workers to sample signatures concurrently. The number of workers should be equal to the number of CPU cores for
 // optimal performance. The function returns a queue of SampledEcdsaSignature objects containing the sampled signatures.
-func CollectSignatures(minSignatures int, workers int, cmdTemplate string, privKey *ssh.Signer, timeout int) (*queue.Queue, error) {
+func CollectSignatures(minSignatures int, workers int, cmdTemplate string, privKey *ssh.Signer, timeout int, noPartialSuccess bool) (*queue.Queue, error) {
 	wg := sync.WaitGroup{}
 	timeStart := time.Now()
 	sigQueue := queue.DefaultQueue()
-	config, err := ConstructServerConfig(&sigQueue, privKey)
+	config, err := ConstructServerConfig(&sigQueue, privKey, noPartialSuccess)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +170,7 @@ func testSampledNonceBias(nonceSamples []*big.Int, modulus *big.Int) bool {
 // fails or if an error occurs during signature collection or nonce recovery. The function uses a number of workers to
 // process the signatures concurrently. The number of workers should be equal to the number of CPU cores for optimal
 // performance.
-func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout int, privKeyFile string, agent bool) error {
+func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout int, privKeyFile string, agent bool, noPartialSuccess bool) error {
 	privKey, err := LoadPrivateKeyFromFile(privKeyFile)
 	if err != nil {
 		return err
@@ -178,6 +180,14 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 		return err
 	}
 
+	privKeyType := privKeySigner.PublicKey().Type()
+	if privKeyType != ssh.KeyAlgoDSA &&
+		privKeyType != ssh.KeyAlgoECDSA256 &&
+		privKeyType != ssh.KeyAlgoECDSA384 &&
+		privKeyType != ssh.KeyAlgoECDSA521 {
+		return fmt.Errorf("unsupported key type for bias analysis (only DSA / ECDSA keys are supported): %s", privKeyType)
+	}
+
 	var sigQueue *queue.Queue
 	if !agent {
 		sigQueue, err = CollectSignatures(
@@ -185,7 +195,8 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 			workers,
 			cmdTemplate,
 			&privKeySigner,
-			timeout)
+			timeout,
+			noPartialSuccess)
 	} else {
 		agentSigQueue := queue.DefaultQueue()
 		err = SampleAgentSignatures(minSignatures, false, &agentSigQueue, privKey)
@@ -196,15 +207,14 @@ func RunBiasAnalysis(minSignatures int, workers int, cmdTemplate string, timeout
 	}
 	var nonces []*big.Int
 	var modulus *big.Int
-	switch privKeySigner.PublicKey().Type() {
-	case ssh.KeyAlgoDSA:
+	if privKeyType == ssh.KeyAlgoDSA {
 		samples := RecoverDsaNonces(sigQueue, privKey.(*dsa.PrivateKey), workers)
 		nonces = make([]*big.Int, 0, len(samples))
 		for _, sample := range samples {
 			nonces = append(nonces, sample.k)
 		}
 		modulus = privKey.(*dsa.PrivateKey).Q
-	case ssh.KeyAlgoECDSA256, ssh.KeyAlgoECDSA384, ssh.KeyAlgoECDSA521:
+	} else {
 		samples := RecoverEcdsaNonces(sigQueue, privKey.(*ecdsa.PrivateKey), workers)
 		nonces = make([]*big.Int, 0, len(samples))
 		for _, sample := range samples {

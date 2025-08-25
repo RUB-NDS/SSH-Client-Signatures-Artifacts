@@ -1,4 +1,6 @@
-# Biased Nonce Attack on PuTTY P-521 Signatures
+# On the Security of SSH Client Signatures - Artifacts
+
+## Biased Nonce Attack on PuTTY P-521 Signatures
 
 To verify the attack, we used the following implementation:
 
@@ -13,7 +15,7 @@ EUROCRYPT 2021. full version available as Cryptology ePrint Archive: Report 2020
 The artifacts were produced by running the following command in a bash shell.
 
 ```bash
-docker run -ti --rm -v `pwd`:/bdd-predicate -w /bdd-predicate martinralbrecht/bdd-predicate sage -python ecdsa_cli.py benchmark -n 521 -k 512 -m 56 -a enum_pred -t 1024 -j 256
+docker run -ti --rm -v `pwd`:/bdd-predicate -w /bdd-predicate martinralbrecht/bdd-predicate sage -python ecdsa_cli.py benchmark -n 521 -k 512 -m 56 -a sieve_pred -t 1024 -j 256
 ```
 
 The command is repeated for different values of "-m 56", ranging from 56 to 64.

@@ -6,10 +6,16 @@ venv/
 
 # Exclude evaluation results
 results/
-# Exclude Elasticsearch CA certificate and scraper config
+
+# key_scraper specific files to exclude
 code/key_scraper/ca.crt
 code/key_scraper/config.json
-
-# Exclude binaries
 code/key_scraper/SSH-Key-Scraper
+
+# nonce_sampler specific files to exclude
+code/nonce_sampler/keys/
+code/nonce_sampler/ssh_server_host_key
 code/nonce_sampler/SSH-Client-Nonce-Sampler
+
+# PuTTY attack benchmark specific files to exclude
+bdd-predicate/

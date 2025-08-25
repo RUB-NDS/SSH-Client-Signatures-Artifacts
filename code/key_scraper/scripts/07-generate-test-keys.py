@@ -20,6 +20,9 @@ from sage.rings.finite_rings.integer_mod import IntegerMod
 from lib.rfc8032 import Edwards25519Point
 from config import *
 
+def _no_verify(public_exponent: int, key_size: int):
+    pass
+rsa._verify_rsa_parameters = _no_verify
 
 def encode_string(s: str | bytes) -> bytes:
     if isinstance(s, str):
@@ -300,11 +303,11 @@ def generate_ecdsa_test_keys() -> list[(str, str, bytes)]:
     fourInt = IntegerMod(R, Integer(4))
     twentySevenInt = IntegerMod(R, Integer(27))
     aInt = IntegerMod(R, Integer(a))
-    # y^2 = x^3 + ax + b <=> x^3 + ax + b - y^2 = 0 <=> x^3 + ax + c = 0
-    cMod = IntegerMod(R, Integer(b - y**2))
     while not small_y_found:
         try:
+            # y^2 = x^3 + ax + b <=> x^3 + ax + b - y^2 = 0 <=> x^3 + ax + c = 0
             y = int.from_bytes(os.urandom(27), "big")
+            cMod = IntegerMod(R, Integer(b - y**2))
             # Cardano's method for depressed cubic equations
             # Adapted to residue class ring modulo p
             # u = cbrt(-c*2^{-1} + sqrt(c^2*4^{-1} + a^3*27^{-1})) mod p
@@ -476,6 +479,8 @@ def generate_dsa_test_keys() -> list[(str, str, bytes)]:
 
 
 if __name__ == "__main__":
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
     with open(f"{RESULTS_DIR}/07-test-keys.txt", "w") as f:
         test_keys = (
             generate_dsa_test_keys()

@@ -11,9 +11,6 @@ import (
 	"encoding/binary"
 	"encoding/pem"
 	"fmt"
-	"go.linecorp.com/garr/queue"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
 	"log"
 	"math/big"
 	"net"
@@ -23,6 +20,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"go.linecorp.com/garr/queue"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
 
 	"filippo.io/edwards25519"
 )
@@ -135,7 +136,7 @@ func LoadOrGenerateHostKey() (ssh.Signer, error) {
 // The server config only allows public key authentication and offers the public key to the signature queue.
 // The signature queue is used to collect signatures for nonce recovery. The private key is used to verify the
 // public key before offering the signature to the queue.
-func ConstructServerConfig(sigQueue *queue.Queue, privKey *ssh.Signer) (*ssh.ServerConfig, error) {
+func ConstructServerConfig(sigQueue *queue.Queue, privKey *ssh.Signer, noPartialSuccess bool) (*ssh.ServerConfig, error) {
 	hostKey, err := LoadOrGenerateHostKey()
 	if err != nil {
 		return nil, err
@@ -198,6 +199,9 @@ func ConstructServerConfig(sigQueue *queue.Queue, privKey *ssh.Signer) (*ssh.Ser
 			default:
 				// This should never happen given that we verify the public key fingerprint before offering the signature
 				return fmt.Errorf("ssh: public key authentication disabled by signature callback, unsupported public key type: %s", pubKey.Type())
+			}
+			if noPartialSuccess {
+				return fmt.Errorf("ssh: public key authentication restricted")
 			}
 			// Reject the signature to avoid successful authentication
 			return &ssh.PartialSuccessError{Next: ssh.ServerAuthCallbacks{

@@ -51,4 +51,5 @@ fi
 cd "$ARTIFACTS_DIR/code/key_scraper"
 log "${GREEN}[+] Invoking key scraper for 24 hours.${NC}"
 timeout 1d "./SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+log "${GREEN}[+] Key scraper finished. Use scripts/02_evaluate_keys.sh to evaluate the results.${NC}"
 cd -
