@@ -17,7 +17,7 @@ class Database:
         insecure = config["mongodb"]["allowInvalidCertificates"]
         tls_str = f"?tls={tls}"
         if tls == "true":
-            tls_str += f"& tlsAllowInvalidCertificates={insecure}"
+            tls_str += f"&tlsallowinvalidcertificates={insecure}"
         self.db_client = MongoClient(f'mongodb://{username}:{password}@{host}:{port}/{tls_str}')
         self.database = self.db_client[config["mongodb"]["db_name"]]
         self.keytree = None
@@ -130,7 +130,7 @@ class Database:
         Stops database insert mode and stores the current key tree
         """
         assert self.insert_mode
-        print("Stack before exit:", *self.keytree.stack)
+        #logger.debug("Stack before exit:", *self.keytree.stack)
         self.keytree.flush_stack()
         self.insert_mode = False
 

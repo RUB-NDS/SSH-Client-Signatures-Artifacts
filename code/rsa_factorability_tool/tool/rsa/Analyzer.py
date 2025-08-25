@@ -66,7 +66,6 @@ def analyze_factorability(config):
     """
 
     num_processes = mp.cpu_count()
-
     start = time()
     db = Database(config)
     root_moduli = []
@@ -102,7 +101,6 @@ def final_gcd(N, node_N, db_id):
     g = gmpy2.gcd(mpz(remainder), node_N)
     if g != 1:
         logger.info(f"{db_id} showed GCD of {g}")
-        print(f"{db_id} showed GCD of {g}")
 
 
 def _mod(N, child_n):
@@ -280,8 +278,8 @@ def node_recursive_primefactor_analysis(db, node, prime):
     factor = gcd(prime, node.N)
     if factor > 1:
         if node.height == 0:
-            primefactors_of_factor = list(primefac(factor))
-            logger.info(f"{node.db_id} showed GCD of {factor}, primfactors are {primefactors_of_factor}")
+            primefactors_of_factor = list(int(x) for x in primefac(factor))
+            logger.info(f"{node.db_id} showed primefactors {primefactors_of_factor}")
         else:
             children = db.get_children(node)
             lc = children[0]

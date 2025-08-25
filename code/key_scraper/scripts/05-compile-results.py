@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from config import *
 
-RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results.csv"
+RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results-with-gcd.csv"
 RESULTS_OUT= f"{RESULTS_DIR}/05-compiled-results.json"
 
 

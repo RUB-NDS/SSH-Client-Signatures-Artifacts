@@ -1,4 +1,4 @@
-# This Docker compose file sets up a three-node Elasticsearch cluster with Kibana.
+# This Docker compose file sets up a three-node Elasticsearch cluster with Kibana as well as a MongoDB.
 # The resulting cluster mimics the environment used throughout our evaluation.
 #
 # Before running `docker compose up`, make sure to adjust your settings in .env.
@@ -231,9 +231,22 @@ services:
       timeout: 10s
       retries: 120
 
+  mongodb:
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PW}
+    mem_limit: ${MEM_LIMIT}
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
 volumes:
   certs:
   esdata01:
   esdata02:
   esdata03:
   kibanadata:
+  mongodata:

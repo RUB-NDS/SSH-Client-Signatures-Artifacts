@@ -5,7 +5,7 @@ from base64 import b64decode
 from bson import ObjectId
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.backends.openssl import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from gmpy2 import *

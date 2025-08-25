@@ -105,7 +105,7 @@ class KeyTree:
         self.stack.reverse()
 
         self.keytree.delete_one({"_id": {"$in": [x.get("_id") for x in path]}})
-        print("RestoredStack:", *self.stack)
+        #print("RestoredStack:", *self.stack)
 
     def flush_stack(self):
         """

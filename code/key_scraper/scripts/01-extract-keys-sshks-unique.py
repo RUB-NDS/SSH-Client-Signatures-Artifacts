@@ -61,6 +61,9 @@ class KeyIterator(object):
         if not self.es.ping():
             tqdm.write("Could not reach Elasticsearch. Abort.")
             raise ConnectionError("Could not reach Elasticsearch.")
+        for index in SRC_INDICES:
+            if not self.es.indices.exists(index=index):
+                self.es.indices.create(index=index)
         # Adjust result window on source indices to allow for larger batch sizes.
         self.es.indices.put_settings(
             index=SRC_INDICES,

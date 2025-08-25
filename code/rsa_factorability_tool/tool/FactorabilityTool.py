@@ -52,10 +52,10 @@ def prepare_logger():
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.ERROR)
 
-    file_handler = logging.FileHandler(f'{datetime.now().strftime("%Y%m%d-%H%M%S")}.log')
-    file_handler.setLevel(logging.DEBUG)
+    #file_handler = logging.FileHandler(f'{datetime.now().strftime("%Y%m%d-%H%M%S")}.log')
+    #file_handler.setLevel(logging.DEBUG)
 
-    logger.addHandler(file_handler)
+    #logger.addHandler(file_handler)
     logger.addHandler(stdout_handler)
 
 def run_using_args():

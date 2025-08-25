@@ -32,7 +32,7 @@ To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that
 4. Install required Python dependencies for the evaluation scripts and tools into the virtual environment
 5. Install SageMath 10.3 as a Python library
 6. Build the key_scraper and nonce_sampler tools using `go build`
-7. Set up Docker containers for the Elasticsearch infrastructure
+7. Set up Docker containers for the Elasticsearch and MongoDB infrastructure
 8. Copy the auto-generated Elasticsearch CA certificate to the host (`code/key_scraper/ca.crt`)
 
 > [!IMPORTANT]

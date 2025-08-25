@@ -12,10 +12,11 @@ from tool.data.Database import Database
 def start(config, args):
     logger = logging.getLogger()
     warnings.filterwarnings('ignore')
-    host = config["mongodb"]["host"]
-    port = config["mongodb"]["port"]
-    username = config["mongodb"]["username"]
-    password = config["mongodb"]["password"]
+    host = config["elastic"]["host"]
+    port = config["elastic"]["port"]
+    username = config["elastic"]["username"]
+    password = config["elastic"]["password"]
+    index = config["elastic"]["index"]
     client = Elasticsearch(
         hosts=[f"https://{host}:{port}"],
         basic_auth=(username, password),
@@ -23,13 +24,16 @@ def start(config, args):
     )
     warnings.filterwarnings('default')
 
+    if not client.indices.exists(index=index):
+        client.indices.create(index=index)
+
     logger.info("Opening Database")
     db = Database(config)
     logger.info("Starting insert")
     db.start_insert()
     try:
         scroll_time = "1d"
-        for ind in ["sshks_keys_unique_202501"]:
+        for ind in [index]:
             logger.info(f"Starting to go through {ind}")
             element_count = client.count(index=ind)
             progress = tqdm(total=element_count.get("count"), )
@@ -63,7 +67,7 @@ def start(config, args):
                         if e > 2**62-1:
                             e = -1
                         key_fingerprint = hashlib.blake2b(str(hit).encode()).digest()
-                        key_info = {"user": user, "metadata": {"e": e, "elastic_id": _id, "elastic_index": ind}}
+                        key_info = {"user": user, "metadata": {"e": e, "elastic_id": _id, "elastic_index": ind, "fpr": _source["fpr"]}}
                         db.add_ssh_key(N, key_fingerprint, key_info, None)
 
                     except KeyboardInterrupt:
