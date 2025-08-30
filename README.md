@@ -1,5 +1,7 @@
 # On the Security of SSH Client Signatures - Artifacts
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17008444.svg)](https://doi.org/10.5281/zenodo.17008444)
+
 This repository contains the artifacts for the paper "On the Security of SSH Client Signatures",
 accepted at the ACM Conference on Computer and Communications Security (CCS) 2025.
 
