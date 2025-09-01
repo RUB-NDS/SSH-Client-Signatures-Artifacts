@@ -12,6 +12,7 @@ accepted at the ACM Conference on Computer and Communications Security (CCS) 202
 We recommend having a machine with at least 16 CPU cores and 64 GB of RAM available.
 This is required to run the Elasticsearch stack and the various analysis tools included in this repository.
 Running with less than the recommended hardware may result in degraded performance or unpredictable results.
+Also, we recommend having at least 50 GB of free disk space to avoid running out of space during experiments.
 
 We ran our experiments on a server with 2 AMD EPYC 7763 64-core CPUs and 2 TB of RAM.
 
@@ -23,7 +24,7 @@ We ran our experiments on a server with 2 AMD EPYC 7763 64-core CPUs and 2 TB of
 - Python 3.11.
 - SageMath 10.3 installed as a Python library.
 
-To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that automates the installation of the required software and dependencies. It is designed to be run on a fresh Ubuntu 24.04 LTS installation. In particular, it will perform the following steps:
+To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that automates the installation of the required software and dependencies. It is designed to be run on a fresh Ubuntu 24.04 LTS installation. Note that the docker containers require support for modern CPU architectures, please use host-passthrough or similar for the CPU mode in your VM if you do not run on native hardware. In particular, it will perform the following steps:
 
 1. Install system packages
     - Latest version of Docker
@@ -115,7 +116,7 @@ After execution, the Elasticsearch database should be populated with user record
 ### E2 - Running the Evaluation Pipeline
 
 > [!NOTE]
-> - Estimated time required: 15 minutes (depending on available CPU cores)
+> - Estimated time required: 1 hour (depending on available CPU cores)
 > - Interaction required: no
 > - Other requirements: none
 > - Proves claim: C2 via result files in `results/`
