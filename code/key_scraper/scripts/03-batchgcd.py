@@ -17,7 +17,6 @@ from bson.objectid import ObjectId
 
 if __name__ == "__main__":
     config = FactorabilityTool.read_config()
-    #config["mongodb"]["password"] = str(os.getenv("MONGO_PW"))
     config["mongodb"]["password"] = "mongopw"
     config["mongodb"]["username"] = "mongo"
     config["mongodb"]["tls"] = "false"
@@ -35,8 +34,7 @@ if __name__ == "__main__":
     logger.addHandler(handler)
 
     try:
-        pass
-        Analyzer.analyze_factorability(config)  
+        Analyzer.analyze_factorability(config)
         Analyzer.primefactor_analysis(config, "code/rsa_factorability_tool/primes.output")
     finally:
         logger.removeHandler(handler)
@@ -61,7 +59,7 @@ if __name__ == "__main__":
     mongo_database = Database.Database(config)
     db = mongo_database.database
     rows_to_add = []
-    
+
     for k,v in results.items():
         for cert in db.certs.find({"key": ObjectId(k)}):
             add_info = cert.get("add_info")
@@ -92,5 +90,3 @@ if __name__ == "__main__":
         for row in rows_to_add:
             row[5] = json.dumps(row[5])
         writer.writerows(rows_to_add)
-            
-

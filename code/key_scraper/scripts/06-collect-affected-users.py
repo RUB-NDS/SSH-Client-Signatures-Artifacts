@@ -19,7 +19,7 @@ from elasticsearch import Elasticsearch
 
 from config import *
 
-RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results.csv"
+RESULTS_IN = f"{RESULTS_DIR}/03-analysis-results-with-gcd.csv"
 
 AFFECTED_USERS_GITHUB_OUT = f"{RESULTS_DIR}/06-affected-users-github.csv"
 AFFECTED_USERS_GITLAB_OUT = f"{RESULTS_DIR}/06-affected-users-gitlab.csv"
@@ -43,10 +43,6 @@ EXCLUDED_CHECKS = [
     # DSA
     'order_not_160_bit',
 ]
-
-# As batch gcd is run separately, provide the document ids of vulnerable key documents
-# in the unique key index. If left empty, results from batch gcd will not be included.
-BATCH_GCD_RESULTS = [ ]
 
 if __name__ == '__main__':
     if not os.path.exists(RESULTS_DIR):
@@ -98,29 +94,3 @@ if __name__ == '__main__':
                             src_doc['_source']['username'],
                             fpr,
                             check_str])
-        # Process batch GCD result document ids
-        for idx in BATCH_GCD_RESULTS:
-            # Will be included in our disclosure
-            doc = es.get(index=INDEX_KEYS_UNIQUE, id=idx)
-            fpr = doc['_source']['fpr']
-            check_str = 'batchgcd'
-            fpr_github = 'SHA256:' + base64.b64encode(bytes.fromhex(fpr)).decode('utf-8').replace('=', '')
-            for source in sources:
-                src_doc = es.get(index=source['index'], id=source['id'])
-                if source['index'] == INDEX_USERS_GITHUB:
-                    writer_github.writerow([
-                        src_doc['_source']['username'],
-                        src_doc['_source']['metadata']['remoteId'],
-                        fpr_github,
-                        check_str])
-                elif source['index'] == INDEX_USERS_GITLAB:
-                    writer_gitlab.writerow([
-                        src_doc['_source']['username'],
-                        src_doc['_source']['metadata']['remoteId'],
-                        fpr,
-                        check_str])
-                elif source['index'] == INDEX_USERS_LAUNCHPAD:
-                    writer_lp.writerow([
-                        src_doc['_source']['username'],
-                        fpr,
-                        check_str])
