@@ -294,6 +294,7 @@ The data points should closely resemble the ones reported in the paper in figure
 │   ├── 03_generate_test_keys.sh   # Generates test keys for testing public key upload restrictions
 │   ├── 04_measure_client_agent.sh # Runs the nonce_sampler tool to measure client nonce determinism and bias
 │   └── 05_bench_biased_nonce.sh   # Benchmarks the success rate of the PuTTY vulnerability as described in the paper
+├── supp_material                  # Contains additional material that did not make it into the final version of the paper but may be of interest
 └── README.md
 ```
 

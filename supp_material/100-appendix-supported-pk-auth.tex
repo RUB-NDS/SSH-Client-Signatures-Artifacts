@@ -1,0 +1,113 @@
+\documentclass[sigconf,nonacm]{acmart}
+
+\usepackage{fontawesome5}
+\usepackage{xspace}
+\usepackage{placeins}
+
+\begin{document}
+
+\newcommand{\supported}{\faCircle}
+\newcommand{\partialsupport}{\faAdjust}
+\newcommand{\unsupported}{\faCircle[regular]}
+\newcommand{\supportedExp}{\color{lightgray} \supported}
+\newcommand{\unsupportedExp}{\color{lightgray} \unsupported}
+\newcommand*{\rot}{\rotatebox{90}}
+\newcommand{\alghead}[2]{\rot{\footnotesize \texttt{#1}~\cite{#2}}}
+\newcommand{\puttyfixedversion}{0.81\xspace}
+\newcommand{\putty}{PuTTY\xspace}
+\begin{table*}
+    \centering
+    \setlength{\tabcolsep}{2.5pt}
+    \caption*{SSH public key algorithms and their support by SSH clients, \texttt{@openssh.com} abbreviated to \texttt{@}, sourced from official vendor documentation (\url{https://www.openssh.com/specs.html}) and the client's configuration. Support for an algorithm is denoted by a filled circle (\supported), while an outlined circle (\unsupported) indicates the lack thereof. Partial support (\partialsupport) indicates that support may be enabled explicitly at build time but is disabled by default. Data points in light gray indicate the need for experimental verification due to the lack of vendor documentation and configurable public key algorithms. }
+    \label{tab:documentation}
+    \small
+    \begin{tabular}{llcccccccccccccccccccccccccccccc}
+        \toprule
+        ~ & ~ & \multicolumn{5}{c}{DSA} & \multicolumn{10}{c}{RSA} & \multicolumn{10}{c}{ECDSA} & \multicolumn{5}{c}{EdDSA} \\
+        \cmidrule(lr){3-7}\cmidrule(lr){8-17}\cmidrule(lr){18-27}\cmidrule(lr){28-32}
+         Name & Version & \alghead{ssh-dss}{rfc4253} & \alghead{ssh-dss-cert-v01@}{protocolopensshcertkeys} & \alghead{x509v3-ssh-dss}{rfc6187} & \alghead{spki-sign-dss}{rfc4253} & \alghead{pgp-sign-dss}{rfc4253} & \alghead{ssh-rsa}{rfc4253} & \alghead{rsa-sha2-256}{rfc8332} & \alghead{rsa-sha2-512}{rfc8332} & \alghead{ssh-rsa-cert-v01@}{protocolopensshcertkeys} & \alghead{rsa-sha2-256-cert-v01@}{protocolopensshcertkeys} & \alghead{rsa-sha2-512-cert-v01@}{protocolopensshcertkeys} & \alghead{x509v3-ssh-rsa}{rfc6187} & \alghead{x509v3-rsa2048-sha256}{rfc6187} & \alghead{spki-sign-rsa}{rfc4253} & \alghead{pgp-sign-rsa}{rfc4253} & \alghead{ecdsa-sha2-nistp256}{rfc5656} & \alghead{ecdsa-sha2-nistp384}{rfc5656} & \alghead{ecdsa-sha2-nistp521}{rfc5656} & \alghead{ecdsa-sha2-1.3.132.0.10}{rfc5656} & \alghead{ecdsa-sha2-nistp256-cert-v01@}{protocolopensshcertkeys} & \alghead{ecdsa-sha2-nistp384-cert-v01@}{protocolopensshcertkeys} & \alghead{ecdsa-sha2-nistp521-cert-v01@}{protocolopensshcertkeys} & \alghead{sk-ecdsa-sha2-nistp256@}{protocolopensshu2f} & \alghead{sk-ecdsa-sha2-nistp256-cert-v01@}{protocolopensshu2f} & \alghead{x509v3-ecdsa-sha2-*}{rfc6187} & \alghead{ssh-ed25519}{rfc8709} & \alghead{ssh-ed25519-cert-v01@}{protocolopensshcertkeys} & \alghead{sk-ssh-ed25519@}{protocolopensshu2f} & \alghead{sk-ssh-ed25519-cert-v01@}{protocolopensshu2f} & \alghead{ssh-ed448}{rfc8709} \\
+         \midrule
+         % https://www.celestialsoftware.net/supported-algorithms/
+         AbsoluteTelnet & 12.16 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \unsupported & \unsupported \\
+         % https://github.com/ronf/asyncssh/blob/v2.18.0/docs/api.rst
+         AsyncSSH & 2.18.0 & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported \\
+         % Undocumented (visible in UI)
+         Bitvise & 9.42 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \unsupported & \unsupported \\
+         % https://docs.cyberduck.io/protocols/sftp/#ssh-key-types
+         Cyberduck & 9.0.1 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \unsupported & \unsupported \\
+         % https://github.com/mkj/dropbear/blob/DROPBEAR_2024.86/src/signkey.h#L64-L91
+         Dropbear & 2024.86 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \supported & \unsupported & \supported & \unsupported & \unsupported \\
+         % https://www.erlang.org/docs/21/man/ssh#type-preferred_algorithms_common_option
+         Erlang/OTP SSH & 5.2.1 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \unsupported & \supported \\
+         % Undocumented (not visible in UI)
+         FileZilla & 3.67.0 & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \supportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \supportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp \\
+         % https://pkg.go.dev/golang.org/x/crypto@v0.29.0/ssh
+         Golang x/crypto/ssh & 0.29.0 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \supported & \unsupported \\
+         % https://www.libssh.org/features/
+         libssh & 0.11.1 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % ssh -Q key-sig
+         OpenSSH Portable & 9.9p1 & \partialsupport & \partialsupport & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \supported & \supported & \unsupported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % Undocumented in API ref (https://github.com/paramiko/paramiko/blob/3.5.0/paramiko/transport.py#L312-L333)
+         Paramiko & 3.5.0 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % ssh -Q key-alg
+         PKIX-SSH & 15.3 & \partialsupport & \partialsupport & \partialsupport & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % Undocumented (visible in UI)
+         \putty & \puttyfixedversion & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \supported \\
+         % Partial documentation available in the changelog, otherwise undocumented (but visible in UI)
+         SecureCRT & 9.5.2 & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % https://docs.ssh.com/manuals/client-user/66/csc-algorithms-publickeyalgorithms.html
+         Tectia SSH & 6.6.3.490 & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported \\
+         % https://teratermproject.github.io/manual/5/en/about/copyright.html
+         Tera Term & 5.2 & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported &\unsupported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \unsupported & \unsupported & \unsupported & \unsupported \\
+         % https://support.termius.com/hc/en-us/articles/4402049882137-Supported-SSH-Capabilities
+         Termius & 9.8.5 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \unsupported  \\
+         % ssh -Q key-sig
+         Win32 OpenSSH & 9.5.0.0 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \supported & \unsupported \\
+         % https://winscp.net/eng/docs/ssh_algorithms
+         % WinSCP.exe /info
+         WinSCP & 6.3.4 & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \unsupported & \supported & \supported & \supported & \unsupported & \supported & \supported & \supported & \unsupported & \unsupported & \unsupported & \supported & \supported & \unsupported & \unsupported & \supported \\
+         % Undocumented (not visible in UI)
+         XShell 7 & Build 0170 & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \supportedExp & \supportedExp & \supportedExp & \supportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \supportedExp & \supportedExp & \unsupportedExp & \supportedExp & \supportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \supportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp & \unsupportedExp \\
+         \bottomrule
+    \end{tabular}
+\end{table*}
+
+
+\newcommand{\notBundled}{\color{lightgray}\small not included}
+\begin{table*}
+    \centering
+    \caption*{Actively maintained third-party graphical user interfaces for the Git version control system on Windows and Linux operating systems. For each client, the bundled Git and SSH clients are listed, if any. If Git is not bundled, the clients require a manual installation of Git with either OpenSSH, \putty, or TortoiseGitPlink as its SSH client. Git can be configured to use a custom SSH client as part of the configuration or via the \texttt{GIT\_SSH\_COMMAND} environment variable.}
+    \label{tab:git}
+    \begin{tabular}{llcclll}
+        \toprule
+        Name & Version & \multicolumn{2}{c}{OS} & Bundled Git Client & Bundled SSH Client & Crypto Library \\
+        \midrule
+        Fork & 2.3.1 & \faWindows & ~ & Git 2.45.2.windows.1 & OpenSSH 9.7p1 & OpenSSL 3.2.1 \\
+        git-cola & 4.10.1 & \faWindows & \faLinux & \notBundled & \notBundled & \notBundled \\
+        GitForce & 1.0.61 & \faWindows & \faLinux & \notBundled & \notBundled & \notBundled \\
+        GitHub Desktop & 3.4.12 & \faWindows & ~ & Git 2.45.1.windows.1 & OpenSSH 9.7p1 & OpenSSL 3.2.1 \\
+        GitKraken & 10.6.0 & \faWindows & ~ & Git 2.47.0.windows.2 & OpenSSH 9.9p1 & OpenSSL 3.2.3 \\
+        ~ & ~ & ~ & \faLinux & Git 2.47.0 & \notBundled & \notBundled \\
+        GitLens & 16.1.0 & \faWindows & \faLinux & \notBundled & \notBundled & \notBundled \\
+        MeGit & 0.8.0 & \faWindows & \faLinux & JGit 7.1.0 & Apache SSHD 2.14.0 & BC Java 1.79.0 \\
+        SmartGit & 24.1.1 & \faWindows & ~ & Git 2.46.0.windows.1 & OpenSSH 9.8p1 & OpenSSL 3.2.2 \\
+        ~ & ~ & ~ & \faLinux & \notBundled & \notBundled & \notBundled \\
+        Sourcetree & 3.4.21 & \faWindows & ~ & Git 2.46.0.windows.1 & \putty \puttyfixedversion & \putty \puttyfixedversion \\
+        Sublime Merge & Build 2102 & \faWindows & ~ & Git 2.39.1.windows.1 & OpenSSH 9.1p1 & OpenSSL 1.1.1s \\
+        ~ & ~ & ~ & \faLinux & \notBundled & \notBundled & \notBundled \\
+        TortoiseGit & 2.17.0.2 & \faWindows & ~ & \notBundled & TortoiseGitPlink \puttyfixedversion & \putty \puttyfixedversion \\
+        Tower & 8.3.499 & \faWindows & ~ & Git 2.47.1.windows.1 & OpenSSH 9.9p1 & OpenSSL 3.2.3 \\
+        ungit & 1.5.28 & \faWindows & \faLinux & \notBundled & \notBundled & \notBundled \\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
+\FloatBarrier
+\title{}
+\maketitle
+\bibliographystyle{ACM-Reference-Format}
+\balance
+\bibliography{literature}
+
+\end{document}
+\endinput
