@@ -181,7 +181,7 @@ function start_elasticsearch() {
     CURRENT_VM_MAX_MAP_COUNT=$(sysctl -n vm.max_map_count)
     if [[ $CURRENT_VM_MAX_MAP_COUNT -lt 262144 ]]; then
         log "    - Setting vm.max_map_count to 262144..."
-        echo "vm.max_map_count=262144" | sudo tee /etc/sysctl.d/99-max_map_count.conf > /dev/null && sudo sysctl -p /etc/sysctl.d/99-max_map_count.conf
+        echo "vm.max_map_count=262144" | sudo tee /etc/sysctl.d/99-max_map_count.conf > /dev/null && sudo sysctl -p /etc/sysctl.d/99-max_map_count.conf >> $LOG_FILE 2>&1
     else
         log "    - vm.max_map_count is already set to $CURRENT_VM_MAX_MAP_COUNT"
     fi
