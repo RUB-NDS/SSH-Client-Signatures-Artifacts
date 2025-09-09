@@ -48,8 +48,14 @@ else
     log "${GREEN}[+] Found existing config.json. Skipping generation.${NC}"
 fi
 
+# Invoke the key scraper for $1 (if defined) or 24 hours (default)
 cd "$ARTIFACTS_DIR/code/key_scraper"
-log "${GREEN}[+] Invoking key scraper for 24 hours.${NC}"
-timeout 1d "./SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+if [ -n "$1" ]; then
+    log "${GREEN}[+] Invoking key scraper for $1.${NC}"
+    timeout "$1" "./SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+else
+    log "${GREEN}[+] Invoking key scraper for 24 hours.${NC}"
+    timeout 1d "./SSH-Key-Scraper" 2>&1 | tee -a $LOG_FILE
+fi
 log "${GREEN}[+] Key scraper finished. Use scripts/02_evaluate_keys.sh to evaluate the results.${NC}"
 cd -

@@ -99,12 +99,12 @@ For running the artifacts, you can use the provided scripts in the `scripts/` di
 ### E1 - Collecting SSH Public Keys
 
 > [!NOTE]
-> - Estimated time required: 24 hours
+> - Estimated time required: 24 hours (adjustable)
 > - Interaction required: yes, initial API token generation (estimate: 10 minutes)
 > - Other requirements: Internet access, API tokens on GitHub / GitLab
 > - Proves claim: C1 via inspection of the scraped data
 
-To collect SSH public keys from GitHub, GitLab and Launchpad, you can use the `scripts/01_run_scraper.sh` script. This script will configure and then start the key scraper and collect SSH public keys from the platforms for a duration of 24 hours. Adjust the timeout in the script as needed (or remove entirely).
+To collect SSH public keys from GitHub, GitLab and Launchpad, you can use the `scripts/01_run_scraper.sh` script. This script will configure and then start the key scraper and collect SSH public keys from the platforms for a duration of 24 hours. To adjust the execution time, pass a duration value to the script, e.g. `scripts/01_run_scraper.sh 2h` (any duration value compatible with the `timeout` utility is supported, see [the corresponding man page](https://linux.die.net/man/1/timeout)). Adjust the timeout in the script as needed (or remove entirely).
 
 To run the scraper on GitHub and GitLab, you will need to provide a personal access token to authenticate with the API of each service. Refer to [GitHub Docs](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api?apiVersion=2022-11-28#authenticating-with-a-personal-access-token) and [GitLab Docs](https://docs.gitlab.com/user/profile/personal_access_tokens/) for more information on how to generate one. For GitHub, we used a classic access token rather than a fine-grained one - if you decide to generate a fine-grained token, selecting public repository access and no account permissions should be sufficient. For GitLab, you must assign at least `read_api` and `read_user` scopes to the access token.
 
