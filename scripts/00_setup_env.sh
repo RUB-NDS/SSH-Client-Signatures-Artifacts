@@ -177,6 +177,14 @@ function build_nonce_sampler() {
 
 function start_elasticsearch() {
     log "${GREEN}[+] Starting Elasticsearch stack...${NC}"
+    # Ensure that vm.max_map_count is set to at least 262144
+    CURRENT_VM_MAX_MAP_COUNT=$(sysctl -n vm.max_map_count)
+    if [[ $CURRENT_VM_MAX_MAP_COUNT -lt 262144 ]]; then
+        log "    - Setting vm.max_map_count to 262144..."
+        echo "vm.max_map_count=262144" | sudo tee /etc/sysctl.d/99-max_map_count.conf > /dev/null && sudo sysctl -p /etc/sysctl.d/99-max_map_count.conf
+    else
+        log "    - vm.max_map_count is already set to $CURRENT_VM_MAX_MAP_COUNT"
+    fi
     cd $ARTIFACTS_DIR/code/env_docker
     # User has not relogged in yet, so we need to use sudo here
     sudo docker compose up -d > /dev/null 2>&1
