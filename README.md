@@ -76,6 +76,9 @@ To test basic functionality after running `scripts/00_setup_env.sh`, you can per
    curl "http://localhost:5601/api/status"
    ```
 
+> [!WARNING]
+> If Elasticsearch is unreachable, verify that the `vm.max_map_count` limit is set to 262144 or higher. To access the current limit, run `sysctl -n vm.max_map_count`. To increase the limit, run `sysctl -w vm.max_map_count=262144` and persist the setting by adding or updating the `vm.max_map_count=262144` setting in the `/etc/sysctl.conf` file. When running `scripts/00_setup_env.sh` to set up the environment, the script will take care of this.
+
 ## Claims
 
 The following major claims are made with regard to the artifacts:
