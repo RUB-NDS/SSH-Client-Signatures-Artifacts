@@ -3,9 +3,9 @@
 ## Docker Compose File for the Evaluation Environment
 
 The Docker compose file contained in this directory is used to setup a
-three-node Elasticsearch cluster that can be used by the SSH-Key-Scraper tool
-(`../../tools/SSH-Key-Scraper`) as well as the evaluation scripts in
-`../eval_scripts`.
+three-node Elasticsearch cluster that can be used by the key_scraper tool
+(`../key_scraper`) as well as the evaluation scripts in
+`../key_scraper/scripts`.
 
 ### Requirements
 
