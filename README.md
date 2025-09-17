@@ -82,6 +82,17 @@ perform the following checks:
    python3.11 --version
    ```
 
+   Expected output (exact versions for Docker and Python can differ):
+
+   ```console
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ docker --version
+   Docker version 28.4.0, build d8eb465
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ go version
+   go version go1.25.0 linux/amd64
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ python3.11 --version
+   Python 3.11.13
+   ```
+
 2. Verify that the Python virtual environment can be activated and, in
    particular, that you can load the SageMath library:
 
@@ -91,6 +102,15 @@ perform the following checks:
    deactivate
    ```
 
+   Expected output:
+
+   ```console
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ . venv/bin/activate
+   (venv) user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ python -c "from sage.all import Primes; print(Primes())"
+   Set of all prime numbers: 2, 3, 5, 7, ...
+   (venv) user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ deactivate
+   ```
+
 3. Verify that the Elasticsearch stack is running and that both, Elasticsearch
    and Kibana, are available:
 
@@ -98,6 +118,39 @@ perform the following checks:
    docker ps
    curl -u elastic:elasticsearchpass --cacert code/key_scraper/ca.crt "https://localhost:9200/_cluster/health?pretty"
    curl "http://localhost:5601/api/status"
+   ```
+
+   Expected output:
+
+   ```console
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ docker ps
+   CONTAINER ID   IMAGE                                                 COMMAND                  CREATED          STATUS                             PORTS                                             NAMES
+   aebdf9a4be7e   docker.elastic.co/kibana/kibana:9.1.2                 "/bin/tini -- /usr/l…"   11 minutes ago   Up 10 minutes (healthy)            127.0.0.1:5601->5601/tcp                          sshks-kibana-1
+   3aad35b1244d   docker.elastic.co/elasticsearch/elasticsearch:9.1.2   "/bin/tini -- /usr/l…"   11 minutes ago   Up 10 minutes (healthy)            9200/tcp, 9300/tcp                                sshks-es03-1
+   5a79993a8353   docker.elastic.co/elasticsearch/elasticsearch:9.1.2   "/bin/tini -- /usr/l…"   11 minutes ago   Up 10 minutes (healthy)            9200/tcp, 9300/tcp                                sshks-es02-1
+   57f0fb088fdd   docker.elastic.co/elasticsearch/elasticsearch:9.1.2   "/bin/tini -- /usr/l…"   11 minutes ago   Up 10 minutes (healthy)            127.0.0.1:9200->9200/tcp, 9300/tcp                sshks-es01-1
+   87fa1a955f51   mongo:latest                                          "docker-entrypoint.s…"   11 minutes ago   Up 10 minutes                      0.0.0.0:27017->27017/tcp, [::]:27017->27017/tcp   sshks-mongodb-1
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ curl -u elastic:elasticsearchpass --cacert code/key_scraper/ca.crt "https://localhost:9200/_cluster/health?pretty"
+   {
+     "cluster_name": "sshks-cluster",
+     "status": "green",
+     "timed_out": false,
+     "number_of_nodes": 3,
+     "number_of_data_nodes": 3,
+     "active_primary_shards": 40,
+     "active_shards": 80,
+     "relocating_shards": 0,
+     "initializing_shards": 0,
+     "unassigned_shards": 0,
+     "unassigned_primary_shards": 0,
+     "delayed_unassigned_shards": 0,
+     "number_of_pending_tasks": 0,
+     "number_of_in_flight_fetch": 0,
+     "task_max_waiting_in_queue_millis": 0,
+     "active_shards_percent_as_number": 100.0
+   }
+   user@ccs25ae:~/SSH-Client-Signatures-Artifacts$ curl "http://localhost:5601/api/status"
+   {"status":{"overall":{"level":"available"}}}
    ```
 
 > [!WARNING]
