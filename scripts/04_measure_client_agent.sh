@@ -26,7 +26,7 @@ if [ ! -d "$ARTIFACTS_DIR/code/nonce_sampler/keys" ]; then
     log "${YELLOW}[~] No previously generated keys found under code/nonce_sampler/keys. Generating new ones...${NC}"
     mkdir -p "$ARTIFACTS_DIR/code/nonce_sampler/keys"
     log "    - Generating DSA key pair id_dsa..."
-    ssh-keygen -t dsa -f "$ARTIFACTS_DIR/code/nonce_sampler/keys/id_dsa" -N "" >> $LOG_FILE 2>&1
+    ssh-keygen -t dsa -f "$ARTIFACTS_DIR/code/nonce_sampler/keys/id_dsa" -m pem -N "" >> $LOG_FILE 2>&1
     log "    - Generating ECDSA NIST P-256 key pair id_ecdsa_nistp256..."
     ssh-keygen -t ecdsa -b 256 -f "$ARTIFACTS_DIR/code/nonce_sampler/keys/id_ecdsa_nistp256" -N "" >> $LOG_FILE 2>&1
     log "    - Generating ECDSA NIST P-384 key pair id_ecdsa_nistp384..."
