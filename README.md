@@ -2,29 +2,39 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17008443.svg)](https://doi.org/10.5281/zenodo.17008443)
 
-This repository contains the artifacts for the paper "On the Security of SSH Client Signatures",
-accepted at the ACM Conference on Computer and Communications Security (CCS) 2025.
+This repository contains the artifacts for the paper "On the Security of SSH
+Client Signatures", accepted at the ACM Conference on Computer and
+Communications Security (CCS) 2025.
 
 ## Prerequisites
 
 ### Hardware Requirements
 
-We recommend having a machine with at least 16 CPU cores and 64 GB of RAM available.
-This is required to run the Elasticsearch stack and the various analysis tools included in this repository.
-Running with less than the recommended hardware may result in degraded performance or unpredictable results.
-Also, we recommend having at least 50 GB of free disk space to avoid running out of space during experiments.
+We recommend having a machine with at least 16 CPU cores and 64 GB of RAM
+available. This is required to run the Elasticsearch stack and the various
+analysis tools included in this repository. Running with less than the
+recommended hardware may result in degraded performance or unpredictable
+results. Also, we recommend having at least 50 GB of free disk space to avoid
+running out of space during experiments.
 
-We ran our experiments on a server with 2 AMD EPYC 7763 64-core CPUs and 2 TB of RAM.
+We ran our experiments on a server with 2 AMD EPYC 7763 64-core CPUs and 2 TB of
+RAM.
 
 ### Software Requirements
 
-- Ubuntu 24.04 LTS. We recommend a fresh installation to avoid possible side effects.
+- Ubuntu 24.04 LTS. We recommend a fresh installation to avoid possible side
+  effects.
 - Docker 28.3.3 or newer.
 - Golang 1.25.0 or newer.
 - Python 3.11.
 - SageMath 10.3 installed as a Python library.
 
-To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that automates the installation of the required software and dependencies. It is designed to be run on a fresh Ubuntu 24.04 LTS installation. Note that the docker containers require support for modern CPU architectures, please use host-passthrough or similar for the CPU mode in your VM if you do not run on native hardware. In particular, it will perform the following steps:
+To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that
+automates the installation of the required software and dependencies. It is
+designed to be run on a fresh Ubuntu 24.04 LTS installation. Note that the
+docker containers require support for modern CPU architectures, please use
+host-passthrough or similar for the CPU mode in your VM if you do not run on
+native hardware. In particular, it will perform the following steps:
 
 1. Install system packages
     - Latest version of Docker
@@ -32,27 +42,39 @@ To ease installation, we provide a setup script (`scripts/00_setup_env.sh`) that
     - SageMath 10.3 dependencies
 2. Install Golang 1.25.0
 3. Sets up a Python virtual environment in `venv/`
-4. Install required Python dependencies for the evaluation scripts and tools into the virtual environment
+4. Install required Python dependencies for the evaluation scripts and tools
+   into the virtual environment
 5. Install SageMath 10.3 as a Python library
 6. Build the key_scraper and nonce_sampler tools using `go build`
 7. Set up Docker containers for the Elasticsearch and MongoDB infrastructure
-8. Copy the auto-generated Elasticsearch CA certificate to the host (`code/key_scraper/ca.crt`)
+8. Copy the auto-generated Elasticsearch CA certificate to the host
+   (`code/key_scraper/ca.crt`)
 
 > [!IMPORTANT]
-> After running the setup script, you must restart your system to ensure all changes take effect.
+>
+> After running the setup script, you must restart your system to ensure all
+> changes take effect.
 
 > [!TIP]
-> Building SageMath 10.3 as a Python library can take a significant amount of time, please be patient. You may track the progress by tailing the log file (`tail -f logs/setup_env.log`).
+>
+> Building SageMath 10.3 as a Python library can take a significant amount of
+> time, please be patient. You may track the progress by tailing the log file
+> (`tail -f logs/setup_env.log`).
 
 ### Other Requirements
 
-For evaluation, accounts on GitHub, GitLab, and Launchpad are required to access the API (GitHub and GitLab only) and to upload generated SSH keys while testing for public key upload restrictions. Free accounts are sufficient for this purpose. Uploaded SSH keys should be removed immediately after testing.
+For evaluation, accounts on GitHub, GitLab, and Launchpad are required to access
+the API (GitHub and GitLab only) and to upload generated SSH keys while testing
+for public key upload restrictions. Free accounts are sufficient for this
+purpose. Uploaded SSH keys should be removed immediately after testing.
 
 ### Basic Functionality Test
 
-To test basic functionality after running `scripts/00_setup_env.sh`, you can perform the following checks:
+To test basic functionality after running `scripts/00_setup_env.sh`, you can
+perform the following checks:
 
-1. Verify that Docker, Golang, and Python are installed and accessible from the command line:
+1. Verify that Docker, Golang, and Python are installed and accessible from the
+   command line:
 
    ```bash
    docker --version
@@ -60,7 +82,8 @@ To test basic functionality after running `scripts/00_setup_env.sh`, you can per
    python3.11 --version
    ```
 
-2. Verify that the Python virtual environment can be activated and, in particular, that you can load the SageMath library:
+2. Verify that the Python virtual environment can be activated and, in
+   particular, that you can load the SageMath library:
 
    ```bash
    . venv/bin/activate
@@ -68,7 +91,8 @@ To test basic functionality after running `scripts/00_setup_env.sh`, you can per
    deactivate
    ```
 
-3. Verify that the Elasticsearch stack is running and that both, Elasticsearch and Kibana, are available:
+3. Verify that the Elasticsearch stack is running and that both, Elasticsearch
+   and Kibana, are available:
 
    ```bash
    docker ps
@@ -77,103 +101,198 @@ To test basic functionality after running `scripts/00_setup_env.sh`, you can per
    ```
 
 > [!WARNING]
-> If Elasticsearch is unreachable, verify that the `vm.max_map_count` limit is set to 262144 or higher. To access the current limit, run `sysctl -n vm.max_map_count`. To increase the limit, run `sysctl -w vm.max_map_count=262144` and persist the setting by adding or updating the `vm.max_map_count=262144` setting in the `/etc/sysctl.conf` file. When running `scripts/00_setup_env.sh` to set up the environment, the script will take care of this.
+>
+> If Elasticsearch is unreachable, verify that the `vm.max_map_count`
+> limit is set to 262144 or higher. To access the current limit, run
+> `sysctl -n vm.max_map_count`. To increase the limit, run
+> `sysctl -w vm.max_map_count=262144` and persist the setting by adding or
+> updating the `vm.max_map_count=262144` setting in the `/etc/sysctl.conf` file.
+> When running `scripts/00_setup_env.sh` to set up the environment, the script
+> will take care of this.
 
 ## Claims
 
 The following major claims are made with regard to the artifacts:
 
-1. The `key_scraper` tool (`code/key_scraper`) is capable of collecting SSH public keys from multiple platforms (GitHub, GitLab, Launchpad) systematically.
-2. The evaluation pipeline (`code/key_scraper/scripts`) can identify and analyze weak SSH keys based on the methodology described in section 3.2 in the paper.
-3. The `07-generate-test-keys.py` script can generate a diverse set of SSH keys violating certain properties for testing upload restrictions. At the time of artifact evaluation, these keys were able to reproduce table 2 in the paper.
-4. The `nonce_sampler` tool (`code/nonce_sampler`) can test ECDSA and EdDSA signatures generated by SSH clients and agents for determinism and potential bias. It can find the biased nonce vulnerability in PuTTY <= 0.80 ([CVE-2024-31497](https://www.cve.org/CVERecord?id=CVE-2024-31497)).
-5. The success rate of the [sieve_pred algorithm](https://github.com/malb/bdd-predicate) in the context of the PuTTY biased nonce vulnerability (521-bit nonces, 9 bits biased) is given by figure 5 in the paper. In particular, the attack always succeeds when at least 60 signatures with biased nonces are available.
+1. The `key_scraper` tool (`code/key_scraper`) is capable of collecting SSH
+   public keys from multiple platforms (GitHub, GitLab, Launchpad)
+   systematically.
+2. The evaluation pipeline (`code/key_scraper/scripts`) can identify and analyze
+   weak SSH keys based on the methodology described in section 3.2 in the paper.
+3. The `07-generate-test-keys.py` script can generate a diverse set of SSH keys
+   violating certain properties for testing upload restrictions. At the time of
+   artifact evaluation, these keys were able to reproduce table 2 in the paper.
+4. The `nonce_sampler` tool (`code/nonce_sampler`) can test ECDSA and EdDSA
+   signatures generated by SSH clients and agents for determinism and potential
+   bias. It can find the biased nonce vulnerability in PuTTY <= 0.80
+   ([CVE-2024-31497](https://www.cve.org/CVERecord?id=CVE-2024-31497)).
+5. The success rate of the
+   [sieve_pred algorithm](https://github.com/malb/bdd-predicate) in the context
+   of the PuTTY biased nonce vulnerability (521-bit nonces, 9 bits biased) is
+   given by figure 5 in the paper. In particular, the attack always succeeds
+   when at least 60 signatures with biased nonces are available.
 
 > [!TIP]
-> Each claim can be proven by the corresponding experiment with the same number, that is, claim 1 can be proven by E1, claim 2 by E2, and so on.
+>
+> Each claim can be proven by the corresponding experiment with the same number,
+> that is, claim 1 can be proven by E1, claim 2 by E2, and so on.
 
 > [!NOTE]
-> Our paper is based on two full runs of the key scraper evaluation pipeline (claims 1 and 2) in June 2023 and January 2025. Exact reproduction of the results in the paper is not possible due to the changing nature of the source data. Additionally, a full run will require over a month of real time due to API limits. To account for this, the experiments E1 and E2 are designed to demonstrate the capabilities of the proposed tools and methodologies at a small scale reasonable for evaluation.
+>
+> Our paper is based on two full runs of the key scraper evaluation pipeline
+> (claims 1 and 2) in June 2023 and January 2025. Exact reproduction of the
+> results in the paper is not possible due to the changing nature of the source
+> data. Additionally, a full run will require over a month of real time due to
+> API limits. To account for this, the experiments E1 and E2 are designed to
+> demonstrate the capabilities of the proposed tools and methodologies at a
+> small scale reasonable for evaluation.
 
 ## Experiments
 
-For running the artifacts, you can use the provided scripts in the `scripts/` directory. Each script is designed to perform a specific task in the evaluation pipeline.
+For running the artifacts, you can use the provided scripts in the `scripts/`
+directory. Each script is designed to perform a specific task in the evaluation
+pipeline.
 
 ### E1 - Collecting SSH Public Keys
 
 > [!NOTE]
+>
 > - Estimated time required: 24 hours (adjustable)
-> - Interaction required: yes, initial API token generation (estimate: 10 minutes)
+> - Interaction required: yes, initial API token generation
+>   (estimate: 10 minutes)
 > - Other requirements: Internet access, API tokens on GitHub / GitLab
 > - Proves claim: C1 via inspection of the scraped data
 
-To collect SSH public keys from GitHub, GitLab and Launchpad, you can use the `scripts/01_run_scraper.sh` script. This script will configure and then start the key scraper and collect SSH public keys from the platforms for a duration of 24 hours. To adjust the execution time, pass a duration value to the script, e.g. `scripts/01_run_scraper.sh 2h` (any duration value compatible with the `timeout` utility is supported, see [the corresponding man page](https://linux.die.net/man/1/timeout)). Adjust the timeout in the script as needed (or remove entirely).
+To collect SSH public keys from GitHub, GitLab and Launchpad, you can use the
+`scripts/01_run_scraper.sh` script. This script will configure and then start
+the key scraper and collect SSH public keys from the platforms for a duration of
+24 hours. To adjust the execution time, pass a duration value to the script,
+e.g. `scripts/01_run_scraper.sh 2h` (any duration value compatible with the
+`timeout` utility is supported, see
+[the corresponding man page](https://linux.die.net/man/1/timeout)). Adjust the
+timeout in the script as needed (or remove entirely).
 
-To run the scraper on GitHub and GitLab, you will need to provide a personal access token to authenticate with the API of each service. Refer to [GitHub Docs](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api?apiVersion=2022-11-28#authenticating-with-a-personal-access-token) and [GitLab Docs](https://docs.gitlab.com/user/profile/personal_access_tokens/) for more information on how to generate one. For GitHub, we used a classic access token rather than a fine-grained one - if you decide to generate a fine-grained token, selecting public repository access and no account permissions should be sufficient. For GitLab, you must assign at least `read_api` and `read_user` scopes to the access token.
+To run the scraper on GitHub and GitLab, you will need to provide a personal
+access token to authenticate with the API of each service. Refer to
+[GitHub Docs](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api?apiVersion=2022-11-28#authenticating-with-a-personal-access-token)
+and [GitLab Docs](https://docs.gitlab.com/user/profile/personal_access_tokens/)
+for more information on how to generate one. For GitHub, we used a classic
+access token rather than a fine-grained one - if you decide to generate a
+fine-grained token, selecting public repository access and no account
+permissions should be sufficient. For GitLab, you must assign at least
+`read_api` and `read_user` scopes to the access token.
 
 > [!NOTE]
-> Since our evaluation in January 2025, GitLab started to enforce stricter rate limits on their API, which may negatively affect the data collection process. See [their announcement](https://about.gitlab.com/blog/rate-limitations-announced-for-projects-groups-and-users-apis/) for further details. Our testing indicates that these rate limits only slow down, but not prevent, the data collection process.
+>
+> Since our evaluation in January 2025, GitLab started to enforce
+> stricter rate limits on their API, which may negatively affect the data
+> collection process. See
+> [their announcement](https://about.gitlab.com/blog/rate-limitations-announced-for-projects-groups-and-users-apis/)
+> for further details. Our testing indicates that these rate limits only slow
+> down, but not prevent, the data collection process.
 
-After execution, the Elasticsearch database should be populated with user records from all three platforms containing their SSH public keys. You can use Kibana (available at `http://localhost:5601`) to explore the collected dataset. Use `elastic:elasticsearchpass` as the credentials to log in. Navigate to the "Discover" app (`http://localhost:5601/app/discover`) and create a new data view (see [Elastic Docs](https://www.elastic.co/docs/explore-analyze/find-and-organize/data-views)) with an `sshks_users*` index pattern. For the timestamp field, select `visitedAt`.
+After execution, the Elasticsearch database should be populated with user
+records from all three platforms containing their SSH public keys. You can use
+Kibana (available at `http://localhost:5601`) to explore the collected dataset.
+Use `elastic:elasticsearchpass` as the credentials to log in. Navigate to the
+"Discover" app (`http://localhost:5601/app/discover`) and create a new data view
+(see
+[Elastic Docs](https://www.elastic.co/docs/explore-analyze/find-and-organize/data-views))
+with an `sshks_users*` index pattern. For the timestamp field, select
+`visitedAt`.
 
 ### E2 - Running the Evaluation Pipeline
 
 > [!NOTE]
+>
 > - Estimated time required: 1 hour (depending on available CPU cores)
 > - Interaction required: no
 > - Other requirements: none
 > - Proves claim: C2 via result files in `results/`
 
-Once you have collected a decent amount of SSH public keys, run the evaluation by pipeline by calling `scripts/02_evaluate_keys.sh`. This script will perform a full run of the evaluation pipeline on the keys collected by the key scraper tool. In particular, it will perform the following steps:
+Once you have collected a decent amount of SSH public keys, run the evaluation
+by pipeline by calling `scripts/02_evaluate_keys.sh`. This script will perform a
+full run of the evaluation pipeline on the keys collected by the key scraper
+tool. In particular, it will perform the following steps:
 
 1. Activate the virtual environment in `venv`
-2. Extract the SSH keys from the user-oriented scraping results (`01-extract-keys-sshks.py`). Errors are logged to `results/01-extract-keys-sshks-errors.txt`
-3. Collect unique SSH keys and stores it into a separate index (`01-extract-keys-sshks-unique.py`).
+2. Extract the SSH keys from the user-oriented scraping results
+   (`01-extract-keys-sshks.py`). Errors are logged to
+   `results/01-extract-keys-sshks-errors.txt`
+3. Collect unique SSH keys and stores it into a separate index
+   (`01-extract-keys-sshks-unique.py`).
 4. Evaluate basic statistics for the dataset (`02-summarize-keys.py`):
-    - `results/02-summary-ecdsa-curve-dist.png` - Distribution of ECDSA key curves used in the collected SSH keys (figure 4 in the paper).
-    - `results/02-summary-rsa-modulus-cdf.png` - (Complementary) CDF of RSA key modulus sizes used in the collected SSH keys.
-    - `results/02-summary-rsa-modulus-dist.png` - Distribution of RSA key modulus sizes used in the collected SSH keys (figure 3 in the paper).
+    - `results/02-summary-ecdsa-curve-dist.png` - Distribution of ECDSA key
+      curves used in the collected SSH keys (figure 4 in the paper).
+    - `results/02-summary-rsa-modulus-cdf.png` - (Complementary) CDF of RSA key
+      modulus sizes used in the collected SSH keys.
+    - `results/02-summary-rsa-modulus-dist.png` - Distribution of RSA key
+      modulus sizes used in the collected SSH keys (figure 3 in the paper).
     - `02-summary.tex` - LaTeX table used as a base for table 1 in the paper.
-5. Analyze the SSH keys according to the methodology described in section 3.2 of the paper.
+5. Analyze the SSH keys according to the methodology described in section 3.2 of
+   the paper.
 6. Generate a report summarizing the findings of the evaluation pipeline.
-7. Collect users affected by weak keys from the Elasticsearch database for disclosure.
+7. Collect users affected by weak keys from the Elasticsearch database for
+   disclosure.
 
-All results can be found in the `results` directory after running the script. Additionally, the summarized findings are printed to stdout.
+All results can be found in the `results` directory after running the script.
+Additionally, the summarized findings are printed to stdout.
 
 ### E3 - Testing Public Key Upload Restrictions
 
 > [!NOTE]
+>
 > - Estimated time required: 1 hour
-> - Interaction required: yes, uploading test keys to platforms (estimate: 20 minutes per platform)
+> - Interaction required: yes, uploading test keys to platforms
+>   (estimate: 20 minutes per platform)
 > - Other requirements: accessible account on GitHub, GitLab, and Launchpad
-> - Proves claim: C3 by comparison between the platforms' responses and table 2 in the paper
+> - Proves claim: C3 by comparison between the platforms' responses and table 2
+>   in the paper
 
-To test the public key upload restrictions of various platforms, you can generate SSH keys with specific properties (e.g., weak keys) and attempt to upload them to the platforms. To generate the keys, run `scripts/03_generate_test_keys.sh`. This will call the `07-generate-test-keys.py` python script and store the generated keys in the `results` directory. The resulting file contains one SSH key per line that can be copied into the corresponding SSH key upload forms on [GitHub](https://github.com/settings/ssh/new), [GitLab](https://gitlab.com/-/user_settings/ssh_keys), and Launchpad (<https://launchpad.net/~*user*/+editsshkeys>). If the key is accepted without error and is visible in the account's list of SSH keys, we consider the upload successful. Uploading each key to each platform can reproduce table 2 in the paper.
+To test the public key upload restrictions of various platforms, you can
+generate SSH keys with specific properties (e.g., weak keys) and attempt to
+upload them to the platforms. To generate the keys, run
+`scripts/03_generate_test_keys.sh`. This will call the
+`07-generate-test-keys.py` python script and store the generated keys in the
+`results` directory. The resulting file contains one SSH key per line that can
+be copied into the corresponding SSH key upload forms on
+[GitHub](https://github.com/settings/ssh/new),
+[GitLab](https://gitlab.com/-/user_settings/ssh_keys), and Launchpad
+(<https://launchpad.net/~*user*/+editsshkeys>). If the key is accepted without
+error and is visible in the account's list of SSH keys, we consider the upload
+successful. Uploading each key to each platform can reproduce table 2 in the
+paper.
 
 ### E4 - Testing SSH Clients and Agents for Nonce Determinism and Bias
 
 > [!NOTE]
+>
 > - Estimated time required: 5 - 30 minutes / client
 > - Interaction required: yes, installing clients and performing connections
-> - Proves claim: C4 by comparison between the output of the script and table 3 in the paper
+> - Proves claim: C4 by comparison between the output of the script and table 3
+>   in the paper
 
-To test an SSH client or agent for nonce determinism and bias, run `scripts/04_measure_client_agent.sh`.
-The script ask for which algorithm the `nonce_sampler` tool should be invoked and whether the
-implementation to test is a client or agent.
+To test an SSH client or agent for nonce determinism and bias, run
+`scripts/04_measure_client_agent.sh`. The script ask for which algorithm the
+`nonce_sampler` tool should be invoked and whether the implementation to test is
+a client or agent.
 
-If client is selected, the tool will listen on port 2200 for incoming client connections.
-Connect to the tool using your preferred SSH client with the selected key configured for
-authentication (the full key path will be printed during script execution). During the first
-connection, the tool will try to determine the nonce generation algorithm used by the client.
-Manually terminate the SSH client connection if the tool is stuck in the signature collection
-phase (in these cases, the client continuously tries to authenticate in the same connection).
+If client is selected, the tool will listen on port 2200 for incoming client
+connections. Connect to the tool using your preferred SSH client with the
+selected key configured for authentication (the full key path will be printed
+during script execution). During the first connection, the tool will try to
+determine the nonce generation algorithm used by the client. Manually terminate
+the SSH client connection if the tool is stuck in the signature collection phase
+(in these cases, the client continuously tries to authenticate in the same
+connection).
 
-Afterward, the tool will measure nonce bias. Connect to port 2200 using the same SSH client.
-Depending on the client, manual interaction with the client is necessary as some clients
-do not support partial authentication or limit the number of authentication attempts in
-a single connection. Once the required number of signatures has been collected (indicated by
-the `remaining:` counter), terminate any client connection and the tool will proceed to the
-nonce bias measurement phase.
+Afterward, the tool will measure nonce bias. Connect to port 2200 using the same
+SSH client. Depending on the client, manual interaction with the client is
+necessary as some clients do not support partial authentication or limit the
+number of authentication attempts in a single connection. Once the required
+number of signatures has been collected (indicated by the `remaining:` counter),
+terminate any client connection and the tool will proceed to the nonce bias
+measurement phase.
 
 As an example, the following commands cause the local OpenSSH client to connect
 to the nonce_sampler tool using the NIST P-256 key (adjust as necessary):
@@ -185,28 +304,28 @@ ssh -i code/nonce_sampler/keys/id_ecdsa_nistp256 -p 2200 sample@localhost
 # Wait until remaining < 0, then terminate using Ctrl+C
 ```
 
-If agent is selected, the tool will automatically try to connect to the UNIX socket
-given by the $SSH_AUTH_SOCK environment variable. Make sure the SSH agent is running
-before running the script. The tool will try to load the corresponding key into the
-agent using the SSH agent protocol. If the agent uses preconfigured keys only,
-make sure to load the key before running the script. To test a Windows-based agent,
-connect to the VM via SSH with agent forwarding enabled. This will automatically
-set the $SSH_AUTH_SOCK in the shell session.
+If agent is selected, the tool will automatically try to connect to the UNIX
+socket given by the $SSH_AUTH_SOCK environment variable. Make sure the SSH agent
+is running before running the script. The tool will try to load the
+corresponding key into the agent using the SSH agent protocol. If the agent uses
+preconfigured keys only, make sure to load the key before running the script. To
+test a Windows-based agent, connect to the VM via SSH with agent forwarding
+enabled. This will automatically set the $SSH_AUTH_SOCK in the shell session.
 
-As an example, the following commands can be used to start the OpenSSH ssh-agent.
-ssh-agent support adding keys dynamically through the SSH agent protocol.
-Hence, adding the keys before running the script is not necessary.
+As an example, the following commands can be used to start the OpenSSH
+ssh-agent. ssh-agent support adding keys dynamically through the SSH agent
+protocol. Hence, adding the keys before running the script is not necessary.
 
 ```bash
 eval "$(ssh-agent -s)"
 ```
 
-When testing PuTTY 0.80, the script should output a biased nonce with
-the top 9 bits of the nonce being zero all the time and k_proto for the
-nonce generation method. For all other clients tested, the tool should not
-report any bias, while reporting the nonce generation method as in table 3
-in the paper. Similarly, the nonce generation method of an agent should
-coincide with the one given in table 4.
+When testing PuTTY 0.80, the script should output a biased nonce with the top 9
+bits of the nonce being zero all the time and k_proto for the nonce generation
+method. For all other clients tested, the tool should not report any bias, while
+reporting the nonce generation method as in table 3 in the paper. Similarly, the
+nonce generation method of an agent should coincide with the one given in table
+4.
 
 We cannot provide the tested SSH clients and agents as part of these artifacts
 due to licensing restrictions. However, the following tables based on tables 3
@@ -262,20 +381,28 @@ and 4 in the paper may be helpful in reproducing the results:
 ### E5 - PuTTY Vulnerability Success Rate Benchmarking
 
 > [!NOTE]
+>
 > - Estimated time required: 6 hours
 > - Interaction required: no
-> - Proves claim: C5 by comparison between the output of the script and figure 5 in the paper
+> - Proves claim: C5 by comparison between the output of the script and figure 5
+>   in the paper
 
-To benchmark the success rate of the PuTTY vulnerability, run `scripts/05_bench_biased_nonce.sh`.
-This will invoke the `ecdsa_cli.py` script from the [bdd-predicate](https://github.com/malb/bdd-predicate) repository with the PuTTY-specific parameters, and with a varying number of available signatures
+To benchmark the success rate of the PuTTY vulnerability, run
+`scripts/05_bench_biased_nonce.sh`. This will invoke the `ecdsa_cli.py` script
+from the [bdd-predicate](https://github.com/malb/bdd-predicate) repository with
+the PuTTY-specific parameters, and with a varying number of available signatures
 (ranging from 56 to 64 signatures).
 
-Depending on the number of available CPU cores, each run may take significant time to complete.
-With 16 cores on a desktop machine, each run may take around 15-20 minutes to complete.
-You can run `tail -f results/putty_attack/bdd-sieve_pred-$i.out` (where $i is the number of available signatures `m` in the current run) to monitor the progress of each benchmark.
+Depending on the number of available CPU cores, each run may take significant
+time to complete. With 16 cores on a desktop machine, each run may take around
+15-20 minutes to complete. You can run
+`tail -f results/putty_attack/bdd-sieve_pred-$i.out` (where $i is the number of
+available signatures `m` in the current run) to monitor the progress of each
+benchmark.
 
-After completing the benchmarks, the success rate for each run will be printed to stdout.
-The data points should closely resemble the ones reported in the paper in figure 5.
+After completing the benchmarks, the success rate for each run will be printed
+to stdout. The data points should closely resemble the ones reported in the
+paper in figure 5.
 
 ## Repository Structure
 
@@ -303,22 +430,30 @@ The data points should closely resemble the ones reported in the paper in figure
 
 ## Acknowledgements
 
-We use a variety of third party libraries and tools for the tools and scripts contained in this repository.
+We use a variety of third party libraries and tools for the tools and scripts
+contained in this repository.
 
 ### Key Scraper (`code/key_scraper`)
 
-- GraphQL Client - [github.com/Khan/genqlient](https://github.com/Khan/genqlient)
-- Golang Elasticsearch Library - [github.com/elastic/go-elasticsearch](https://github.com/elastic/go-elasticsearch)
-- Scheduling Library - [github.com/reugn/go-quartz](https://github.com/reugn/go-quartz)
-- Configuration Library - [github.com/spf13/viper](https://github.com/spf13/viper)
-- GraphQL Parser - [github.com/vektah/gqlparser](https://github.com/vektah/gqlparser)
+- GraphQL Client -
+  [github.com/Khan/genqlient](https://github.com/Khan/genqlient)
+- Golang Elasticsearch Library -
+  [github.com/elastic/go-elasticsearch](https://github.com/elastic/go-elasticsearch)
+- Scheduling Library -
+  [github.com/reugn/go-quartz](https://github.com/reugn/go-quartz)
+- Configuration Library -
+  [github.com/spf13/viper](https://github.com/spf13/viper)
+- GraphQL Parser -
+  [github.com/vektah/gqlparser](https://github.com/vektah/gqlparser)
 
 ### Key Scraper Evaluation Scripts (`code/key_scraper/scripts`)
 
 - badkeys Tool - [badkeys](https://pypi.org/project/badkeys/)
-- Cryptographic Library - [cryptography](https://pypi.org/project/cryptography/)
+- Cryptographic Library -
+  [cryptography](https://pypi.org/project/cryptography/)
 - Elliptic Curve Library - [ECPy](https://pypi.org/project/ECPy/)
-- Python Elasticsearch Library - [elasticsearch](https://pypi.org/project/elasticsearch/)
+- Python Elasticsearch Library -
+  [elasticsearch](https://pypi.org/project/elasticsearch/)
 - Multi-precision Arithmetic Library - [gmpy2](https://pypi.org/project/gmpy2/)
 - Plotting Library - [matplotlib](https://pypi.org/project/matplotlib/)
 - Multiprocessing Library - [mpire](https://pypi.org/project/mpire/)
@@ -329,20 +464,24 @@ We use a variety of third party libraries and tools for the tools and scripts co
 ### RSA Factorability Tool (`code/rsa_factorability_tool`)
 
 - badkeys Tool - [badkeys](https://pypi.org/project/badkeys/)
-- Cryptographic Library - [cryptography](https://pypi.org/project/cryptography/)
+- Cryptographic Library -
+  [cryptography](https://pypi.org/project/cryptography/)
 - WSGI Web Application Framework - [Flask](https://pypi.org/project/Flask/)
 - Multi-precision Arithmetic Library - [gmpy2](https://pypi.org/project/gmpy2/)
 - Python MongoDB Library - [pymongo](https://pypi.org/project/pymongo/)
 - WSGI Server - [waitress](https://pypi.org/project/waitress/)
 - Integer Factorization - [primefac](https://pypi.org/project/primefac/)
 - Progress Bar - [tqdm](https://pypi.org/project/tqdm/)
-- Python Elasticsearch Library - [elasticsearch](https://pypi.org/project/elasticsearch/)
+- Python Elasticsearch Library -
+  [elasticsearch](https://pypi.org/project/elasticsearch/)
 
 ### Client Nonce Sampler (`code/nonce_sampler`)
 
-- Implementation of the Edwards25519 Curve - [filippo.io/edwards25519](https://filippo.io/edwards25519)
+- Implementation of the Edwards25519 Curve -
+  [filippo.io/edwards25519](https://filippo.io/edwards25519)
 - Colorized Output - [github.com/fatih/color](https://github.com/fatih/color)
 - Tabular Output - [github.com/rodaine/table](https://github.com/rodaine/table)
 - CLI Interface - [github.com/urfave/cli](https://github.com/urfave/cli)
 - Queue Implementation - [go.linecorp.com/garr](https://go.linecorp.com/garr)
-- Cryptographic Library / SSH Implementation - [golang.org/x/crypto](https://golang.org/x/crypto) (modified)
+- Cryptographic Library / SSH Implementation -
+  [golang.org/x/crypto](https://golang.org/x/crypto) (modified)

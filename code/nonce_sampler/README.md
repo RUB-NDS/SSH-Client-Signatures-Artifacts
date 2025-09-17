@@ -2,22 +2,23 @@
 
 ## SSH Client / Agent Nonce Sampler
 
-This tool is designed to automatically sample DSA, ECDSA, and EdDSA nonces
-from SSH clients during authentication in a lab environment. It also supports
-sampling nonces from SSH agents by directly connecting to the UNIX socket of
-the agent. Based on the samples nonces, the tool can determine whether
-deterministic nonces are used by the client, and measure potential bias in the
-nonce generation.
+This tool is designed to automatically sample DSA, ECDSA, and EdDSA nonces from
+SSH clients during authentication in a lab environment. It also supports
+sampling nonces from SSH agents by directly connecting to the UNIX socket of the
+agent. Based on the samples nonces, the tool can determine whether deterministic
+nonces are used by the client, and measure potential bias in the nonce
+generation.
 
 > [!IMPORTANT]
-> To determine whether nonces are generated randomly, the tool tries to sample
-> at least two signatures computed over the same message. To do so, a partial
-> success is indicated to the client, encouraging further authentication attempts
-> in the same session. This may not work for all SSH clients depending on their
-> implementation. If the tool cannot sample two or more signatures, only
-> well-known deterministic schemes can be ruled out. Sometimes, multiple
-> authentication attempts can also be achieved by configuring the same key
-> multiple times.
+>
+> To determine whether nonces are generated randomly, the tool
+> tries to sample at least two signatures computed over the same message. To do
+> so, a partial success is indicated to the client, encouraging further
+> authentication attempts in the same session. This may not work for all SSH
+> clients depending on their implementation. If the tool cannot sample two or
+> more signatures, only well-known deterministic schemes can be ruled out.
+> Sometimes, multiple authentication attempts can also be achieved by
+> configuring the same key multiple times.
 
 ## Building
 
