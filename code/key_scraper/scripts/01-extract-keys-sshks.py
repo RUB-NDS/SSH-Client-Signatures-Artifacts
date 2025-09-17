@@ -164,8 +164,8 @@ class KeyIterator(object):
                         "_source": key,
                     }
                     actions.append(action)
-                for err in result["_errors"]:
-                    errors.append(err)
+                for err, traceback_str in result["_errors"]:
+                    errors.append(err + "\n" + traceback_str)
                     tqdm.write(err)
 
         # Merge actions with the same key fingerprint.
@@ -319,7 +319,7 @@ def process(user_obj):
         except Exception as e:
             traceback_str = "".join(traceback.format_tb(e.__traceback__))
             err = (
-                "Error: "
+                "Warning: "
                 + str(e)
                 + " for user "
                 + user_obj["_id"]
@@ -327,12 +327,8 @@ def process(user_obj):
                 + str(key_index)
                 + ") in index "
                 + user_obj["_index"]
-                + ": "
-                + repr(user_obj)
-                + "\n"
-                + traceback_str
             )
-            errors.append(err)
+            errors.append((err, traceback_str))
     return {"_user": user_obj, "_keys": keys, "_errors": errors}
 
 
