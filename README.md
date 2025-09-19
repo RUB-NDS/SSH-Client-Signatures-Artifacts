@@ -406,6 +406,9 @@ nonce generation method of an agent should coincide with the one given in Table
 > you build PuTTY from source), adjust the command to include the relative or
 > absolute path.
 
+You can also find a pre-recorded demonstration of us running experiment E4 against
+a Windows-based PuTTY client [in the supp_material folder](supp_material/demo_putty_nonce_measurement.mp4).
+
 We cannot provide the tested SSH clients and agents as part of these artifacts
 due to licensing restrictions. However, the following tables based on Tables 4
 and 5 in the paper may be helpful in reproducing the results:
